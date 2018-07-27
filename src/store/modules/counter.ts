@@ -6,9 +6,9 @@ const state = {
 
 // getters
 const getters = {
-    count: (state) => state.count,
+    count: (state: any) => state.count,
     limit: () => 5,
-    recentHistory: (state, getters) => {
+    recentHistory: (state: any, getters: any) => {
         const end = state.history.length;
         const begin = end - getters.limit < 0 ? 0 : end - getters.limit;
         return state.history
@@ -19,18 +19,18 @@ const getters = {
 
 // actions
 const actions = {
-    increment: ({ commit }) => {
+    increment: ({ commit }: any) => {
         commit('increment');
     },
-    decrement: ({ commit }) => {
+    decrement: ({ commit }: any) => {
         commit('decrement');
     },
-    incrementIfOdd: ({ commit, state }) => {
+    incrementIfOdd: ({ commit, state }: any) => {
         if ((state.count + 1) % 2 === 0) {
             commit('increment');
         }
     },
-    incrementAsync: ({ commit }) => {
+    incrementAsync: ({ commit }: any) => {
         setTimeout(() => {
             commit('increment');
         }, 1000);
@@ -39,11 +39,11 @@ const actions = {
 
 // mutations
 const mutations = {
-    increment(state) {
+    increment(state: any) {
         state.count++;
         state.history.push('increment');
     },
-    decrement(state) {
+    decrement(state: any) {
         state.count--;
         state.history.push('decrement');
     },
