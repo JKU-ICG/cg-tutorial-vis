@@ -23,6 +23,11 @@
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.1",
     "typescript": "^2.9.0",
-    "vue-template-compiler": "^2.5.16"
+    "vue-template-compiler": "^2.5.16",
+    "vue-threejs": "^0.1.1",
+    "ajv-keywords": "3.2.0",
+    "three": "^0.94.0",
+    "dat.gui": "^0.7.2",
+    "oimo": "^1.0.9"
   }
 }
