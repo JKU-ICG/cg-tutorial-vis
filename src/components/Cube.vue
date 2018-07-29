@@ -2,7 +2,7 @@
   <mesh name="Cube">
     <geometry type="Box" :args="[size, size, size]"></geometry>
     <material type="MeshBasic">
-      <texture :url="`../assets/textures/${texture}.png`"></texture>
+      <texture :url="`textures/${texture}.png`"></texture>
     </material>
   </mesh>
 </template>
