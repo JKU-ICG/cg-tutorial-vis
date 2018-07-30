@@ -12,7 +12,7 @@ npm install -g @vue/cli
 vue ui
 ```
 
-Clone repository and install dependencies
+Clone repository and install dependencies:
 
 ```
 git clone https://github.com/JKU-ICG/explanatory-cg-viz.git
