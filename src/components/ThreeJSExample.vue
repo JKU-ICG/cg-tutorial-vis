@@ -1,10 +1,18 @@
 <template>
-  <renderer :size="{ w: 600, h: 400 }">
-    <scene>
-      <camera :position="{ z: 15 }"></camera>
-      <cube texture="cobblestone" :size="count"></cube>
-    </scene>
-  </renderer>
+  <div>
+    Select cube texture: 
+    <select v-model="texture">
+      <option value="cobblestone">cobblestone</option>
+      <option value="redwool">redwool</option>
+      <option value="diamond">diamond</option>
+    </select>
+    <renderer :size="{ w: 600, h: 400 }">
+      <scene>
+        <camera :position="{ z: 15 }"></camera>
+        <cube :texture="texture" :size="count"></cube>
+      </scene>
+    </renderer>
+  </div>
 </template>
 
 <script lang="ts">
@@ -20,6 +28,11 @@ Vue.use(VueThreejs);
 @Component({
   components: {
     Cube
+  },
+  data: function() {
+    return {
+      texture: "cobblestone" // pre-select the option
+    };
   },
   computed: {
     ...mapGetters(["count"])
