@@ -2,7 +2,7 @@
   <div class="about">
     <h1>Lab1</h1>
     <CounterControls/>
-    <ThreeJSExample/>
+    <MyCubeControls/>
   </div>
 </template>
 
@@ -10,11 +10,13 @@
 import { Component, Vue } from "vue-property-decorator";
 import CounterControls from "@/components/CounterControls.vue"; // @ is an alias to /src
 import ThreeJSExample from "@/components/ThreeJSExample.vue";
+import MyCubeControls from "@/components/MyCubeControls.vue";
 
 @Component({
   components: {
     CounterControls,
-    ThreeJSExample
+    ThreeJSExample,
+    MyCubeControls
   }
 })
 export default class Lab1 extends Vue {}
