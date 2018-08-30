@@ -3,7 +3,10 @@
      New Scale: {{ scale }}    
     <button @click="increment">+</button>
     <button @click="decrement">-</button>   
+    
+    <ColorPicker/>
     <div id="inputcontrol"></div>
+    
   </div> 
 </template>
 
@@ -11,11 +14,14 @@
 
 import * as Three from 'three';
 import { createNamespacedHelpers } from "vuex";
+import ColorPicker from '@/components/ColorPicker.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers("cubestore");
 
 export default {
-
+        components: {
+            ColorPicker
+        },
         data:function(){
 
             return{ 
@@ -24,13 +30,13 @@ export default {
                 scene: new Three.Scene(), 
                 camera: new Three.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 ), 
                 geometry: new Three.BoxGeometry(200,200,200),
-                material: new Three.MeshBasicMaterial({ color:  0xFFFF00 }),
+                material: new Three.MeshBasicMaterial({ color:  this.colors }),
                 cube: new Three.Mesh()
             }            
         },
 
         computed: {
-            ...mapGetters(["scale", "displayWidth", "displayHeight"])
+            ...mapGetters(["scale", "displayWidth", "displayHeight", "colors"])
         },
         
         methods: {
@@ -39,8 +45,8 @@ export default {
                 "decrement"
             ]),
 
-            init: function(){                                
-                this.cube = new Three.Mesh(this.geometry, this.material);           
+            init: function(){                                              
+                this.cube = new Three.Mesh(this.geometry, this.material);                    
                 this.cube.name = "myCube";
                 this.camera.position.z = 400;
                 this.scene.add(this.cube);    
@@ -60,7 +66,11 @@ export default {
             scale: function(){
                 this.cube.scale.set(this.scale, this.scale, this.scale);                                 
                 //this.renderer.render(this.scene, this.camera); //If animate is not being used then this needs to be called explicitly. Also in init.
+            },
+            colors: function(){
+                this.cube.material.color.set(this.colors); 
             }
+
         },
 
         mounted: function(){

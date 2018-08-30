@@ -2,7 +2,8 @@
 const state = {
     scale: 0.1, 
     displayWidth: window.innerWidth/2,
-    displayHeight: window.innerHeight/2   
+    displayHeight: window.innerHeight/2,
+    colors: '#194d33'
 };
 
 // getters
@@ -10,6 +11,7 @@ const getters = {
     scale: (state: any) => state.scale,
     displayWidth: (state: any) => state.displayWidth,
     displayHeight: (state: any) => state.displayHeight,
+    colors: (state: any) => state.colors
 };
 
 // actions
@@ -19,6 +21,9 @@ const actions = {
     },
     decrement: ({ commit }: any) => {
         commit('decrement');
+    },
+    setColor: ({ commit }: any, newColor: any) => {
+        commit('setColor', newColor);
     }    
 };
 
@@ -29,6 +34,9 @@ const mutations = {
     },
     decrement(state: any) {
         state.scale -= 0.1;        
+    },
+    setColor(state: any, newColor: any) {
+        state.colors = newColor.hex;        
     },
 };
 
