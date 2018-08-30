@@ -5,7 +5,6 @@
     <button @click="decrement">-</button>   
     <div id="inputcontrol"></div>
   </div> 
-  </div>
 </template>
 
 <script>
