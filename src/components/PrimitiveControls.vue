@@ -1,9 +1,5 @@
 <template>
-  <div>  
-     New Scale: {{ scale }}    
-    <button @click="increment">+</button>
-    <button @click="decrement">-</button>    
-  </div>
+    <div id="primitivecontrol"/>    
 </template>
 
 <script>
@@ -23,13 +19,13 @@ export default {
                 scene: new Three.Scene(), 
                 camera: new Three.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 ), 
                 geometry: new Three.BoxGeometry(200,200,200),
-                material: new Three.MeshBasicMaterial({ color:  0xFFFF00 }),
+                material: new Three.MeshBasicMaterial({ color:  0x00FF00 }),
                 cube: new Three.Mesh()
             }            
         },
 
         computed: {
-            ...mapGetters(["scale"])
+            ...mapGetters(["scale", "displayWidth", "displayHeight"])
         },
         
         methods: {
@@ -44,8 +40,8 @@ export default {
                 this.camera.position.z = 400;
                 this.scene.add(this.cube);    
                 this.renderer.setPixelRatio(window.devicePixelRatio);
-                this.renderer.setSize(window.innerWidth, window.innerHeight);
-                document.body.appendChild(this.renderer.domElement); 
+                this.renderer.setSize(this.displayWidth, this.displayHeight);
+                document.getElementById("primitivecontrol").appendChild(this.renderer.domElement);  
             },
 
             animate: function(){
