@@ -1,11 +1,15 @@
 // initial state
 const state = {
-    scale: 0.1,    
+    scale: 0.1, 
+    displayWidth: window.innerWidth/2,
+    displayHeight: window.innerHeight/2   
 };
 
 // getters
 const getters = {
-    scale: (state: any) => state.scale    
+    scale: (state: any) => state.scale,
+    displayWidth: (state: any) => state.displayWidth,
+    displayHeight: (state: any) => state.displayHeight,
 };
 
 // actions

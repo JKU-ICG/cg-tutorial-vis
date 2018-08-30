@@ -1,22 +1,36 @@
 <template>
   <div class="about">
     <h1>Lab1</h1>
-    <CounterControls/>
-    <MyCubeControls/>
+    <div class="grid">
+      <InputControls/>
+      <PrimitiveControls/>
+      <RasterizeControls/>
+      <OutputControls/>
+    </div>
   </div>
 </template>
 
+<style>
+.grid {
+  display: grid;
+  grid-template-rows: 200px 200px;
+  grid-template-columns: 50% 50%; 
+}
+</style>
+
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import CounterControls from "@/components/CounterControls.vue"; // @ is an alias to /src
-import ThreeJSExample from "@/components/ThreeJSExample.vue";
-import MyCubeControls from "@/components/MyCubeControls.vue";
+import InputControls from "@/components/InputControls.vue";
+import PrimitiveControls from "@/components/PrimitiveControls.vue";
+import RasterizeControls from "@/components/RasterizeControls.vue";
+import OutputControls from "@/components/OutputControls.vue";
 
 @Component({
   components: {
-    CounterControls,
-    ThreeJSExample,
-    MyCubeControls
+    InputControls,
+    PrimitiveControls,
+    RasterizeControls,
+    OutputControls
   }
 })
 export default class Lab1 extends Vue {}
