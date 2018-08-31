@@ -6,13 +6,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import CounterControls from "@/components/CounterControls.vue"; // @ is an alias to /src
+import { Component, Vue } from 'vue-property-decorator';
+import CounterControls from '@/components/CounterControls.vue'; // @ is an alias to /src
 
 @Component({
   components: {
-    CounterControls
-  }
+    CounterControls,
+  },
 })
 export default class Lab2 extends Vue {}
 </script>

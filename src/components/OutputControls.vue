@@ -5,62 +5,60 @@
 <script>
 
 import * as Three from 'three';
-import { createNamespacedHelpers } from "vuex";
+import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions, mapGetters } = createNamespacedHelpers("cubestore");
+const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 
 export default {
 
-        data:function(){
+        data: function() {
 
-            return{ 
-                finalSize: 1,                              
-                renderer: new Three.WebGLRenderer( { antialias: true } ), 
-                scene: new Three.Scene(), 
-                camera: new Three.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 ), 
-                geometry: new Three.BoxGeometry(200,200,200),
-                material: new Three.MeshBasicMaterial({ color:  0xFF00FF }),
-                cube: new Three.Mesh()
-            }            
+            return{
+                finalSize: 1,
+                renderer: new Three.WebGLRenderer( { antialias: true } ),
+                scene: new Three.Scene(),
+                camera: new Three.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 ),
+                geometry: new Three.BoxGeometry( 200, 200, 200),
+                material: new Three.MeshBasicMaterial({ color: 0xFF00FF }),
+                cube: new Three.Mesh(),
+            }
         },
 
         computed: {
-            ...mapGetters(["scale", "displayWidth", "displayHeight"])
+            ...mapGetters(['scale', 'displayWidth', 'displayHeight']),
         },
         
         methods: {
             ...mapActions([
-                "increment",
-                "decrement"
+                'increment',
+                'decrement',
             ]),
 
-            init: function(){                                
-                this.cube = new Three.Mesh(this.geometry, this.material);           
-                this.cube.name = "myCube";
+            init: function() {
+                this.cube = new Three.Mesh(this.geometry, this.material);
+                this.cube.name = 'myCube';
                 this.camera.position.z = 400;
-                this.scene.add(this.cube);    
+                this.scene.add(this.cube);
                 this.renderer.setPixelRatio(window.devicePixelRatio);
                 this.renderer.setSize(this.displayWidth, this.displayHeight);
-                document.getElementById("outputcontrol").appendChild(this.renderer.domElement); 
+                document.getElementById('outputcontrol').appendChild(this.renderer.domElement); 
             },
 
             animate: function(){
                 requestAnimationFrame(this.animate);
-                this.cube.rotation.x += 0.01;                
+                this.cube.rotation.x += 0.01;
                 this.renderer.render(this.scene, this.camera);
-            }
-        },
+            }        },
         
         watch: {
             scale: function(){
-                this.cube.scale.set(this.scale, this.scale, this.scale);                                 
-                //this.renderer.render(this.scene, this.camera); //If animate is not being used then this needs to be called explicitly. Also in init.
+                this.cube.scale.set(this.scale, this.scale, this.scale);
             }
         },
 
         mounted: function(){
             this.init();
             this.animate();
-        }        
+        },
     };
 </script>

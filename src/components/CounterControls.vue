@@ -12,21 +12,21 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from "vuex";
+import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions, mapGetters } = createNamespacedHelpers("counter"); // use counter store
+const { mapActions, mapGetters } = createNamespacedHelpers('counter'); // use counter store
 
 export default {
   computed: {
-    ...mapGetters(["count", "recentHistory"])
+    ...mapGetters(['count', 'recentHistory']),
   },
   methods: {
     ...mapActions([
-      "increment",
-      "decrement",
-      "incrementIfOdd",
-      "incrementAsync"
-    ])
-  }
+      'increment',
+      'decrement',
+      'incrementIfOdd',
+      'incrementAsync',
+    ]),
+  },
 };
 </script>

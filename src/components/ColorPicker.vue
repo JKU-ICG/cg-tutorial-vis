@@ -1,6 +1,6 @@
 <template>
   <div id ="colorpicker">
-    <slider-picker :value="colors" @input="setColor" ></slider-picker>   
+    <slider-picker :value="color" @input="setColor" ></slider-picker>
   </div>
 </template>
 
@@ -8,22 +8,22 @@
 import Vue from 'vue';
 import slider from 'vue-color/src/components/Slider.vue';
 
-import { createNamespacedHelpers } from "vuex";
+import { createNamespacedHelpers } from 'vuex';
 
-const { mapGetters, mapActions } = createNamespacedHelpers("cubestore");
+const { mapGetters, mapActions } = createNamespacedHelpers('cubestore');
 
 export default Vue.extend({
-  components: {    
-      'slider-picker': slider,    
+
+  components: {
+      'slider-picker': slider,
   },
+
   computed: {
-    ...mapGetters(["colors"])
+    ...mapGetters(['color']),
   },
   methods: {
-    ...mapActions([
-      "setColor"
-    ]),
-  }  
-})
+    ...mapActions(['setColor']),
+  },
+});
 </script>
 

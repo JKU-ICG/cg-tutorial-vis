@@ -19,7 +19,7 @@
 </style>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue } from 'vue-property-decorator';
 import InputControls from '@/components/InputControls.vue';
 import PrimitiveControls from '@/components/PrimitiveControls.vue';
 import RasterizeControls from '@/components/RasterizeControls.vue';
@@ -30,8 +30,8 @@ import OutputControls from '@/components/OutputControls.vue';
     InputControls,
     PrimitiveControls,
     RasterizeControls,
-    OutputControls   
-  }
+    OutputControls,
+  },
 })
 export default class Lab1 extends Vue {}
 </script>
