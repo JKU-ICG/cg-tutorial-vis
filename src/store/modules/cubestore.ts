@@ -4,6 +4,7 @@ const state = {
     displayWidth: window.innerWidth / 2,
     displayHeight: window.innerHeight / 2,
     color: '#194d33',
+    //color: { r: 255, g: 255, b: 255, a: 1 },
 };
 
 // getters

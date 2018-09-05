@@ -2,10 +2,10 @@
   <div class="about">
     <h1>Lab1</h1>
     <div class="grid">
-      <InputControls/>      
-      <PrimitiveControls/>
-      <RasterizeControls/>
-      <OutputControls/>
+      <InputControls/>
+      <!-- <PrimitiveControls/>
+      <RasterizeControls/>-->
+      <OutputControls/> 
     </div>
   </div>
 </template>
