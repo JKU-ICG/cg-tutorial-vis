@@ -19,7 +19,7 @@ export default {
                 scene: new Three.Scene(),
                 camera: new Three.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 ),
                 geometry: new Three.BoxGeometry( 200, 200, 200),
-                material: new Three.MeshBasicMaterial({ color: 0x00FF00 }),
+                material: new Three.MeshBasicMaterial({ color: 0x00FF00, wireframe: true }),
                 cube: new Three.Mesh(),
             }
         },

@@ -1,10 +1,9 @@
 <template>
   <div>  
-     New Scale: {{ scale }}
+     <!-- New Scale: {{ scale }}
     <button @click="increment">+</button>
-    <button @click="decrement">-</button>
-    <ColorPicker/>
-    <div id="inputcontrol" v-on:click="changeColor"></div>    
+    <button @click="decrement">-</button> -->
+    <div id="inputcontrol" v-on:click="changeColor"></div>
   </div>
 </template>
 
@@ -12,15 +11,10 @@
 
 import * as Three from 'three';
 import { createNamespacedHelpers } from 'vuex';
-import ColorPicker from '@/components/ColorPicker.vue';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 
 export default {
-
-        components: {
-            ColorPicker,
-        },
 
         data() {
             return {
