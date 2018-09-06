@@ -3,9 +3,9 @@
     <h1>Lab1</h1>
     <div class="grid">
       <InputControls/>
-      <!-- <PrimitiveControls/>
-      <RasterizeControls/>-->
+      <PrimitiveControls/>
       <OutputControls/> 
+      <RasterizeControls/>      
     </div>
   </div>
 </template>

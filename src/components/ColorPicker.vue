@@ -1,6 +1,7 @@
 <template>
   <div id ="colorpicker">
     <slider-picker :value="color" @input="setColor" ></slider-picker>
+     <!-- Directly updates the color value -->
   </div>
 </template>
 

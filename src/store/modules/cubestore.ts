@@ -2,9 +2,8 @@
 const state = {
     scale: 0.1,
     displayWidth: window.innerWidth / 2,
-    displayHeight: window.innerHeight / 2,
-    color: '#194d33',
-    //color: { r: 255, g: 255, b: 255, a: 1 },
+    displayHeight: window.innerHeight / 2,    
+    color: { r: 255, g: 0, b: 0 },
 };
 
 // getters
@@ -37,7 +36,7 @@ const mutations = {
         state.scale -= 0.1;
     },
     setColor(state: any, newColor: any) {
-        state.color = newColor.hex;
+        state.color = newColor.rgba;
     },
 };
 
