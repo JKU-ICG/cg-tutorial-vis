@@ -4,7 +4,6 @@
 
 <script>
 
-import * as Three from 'three';
 import shapeMixin from './AbstractView';
 import { createNamespacedHelpers } from 'vuex';
 
@@ -19,7 +18,7 @@ export default {
         },
 
         methods: {
-            init: function() {
+            init() {
                 var elements = this.finalSceneElements();
                 document.getElementById('primitivecontrol').appendChild(elements.renderer.domElement);
             },
@@ -27,11 +26,11 @@ export default {
 
         watch: {
             color() {
-                //this.updateColors(this.color);
+                this.updateMaterial();
             }
         },
 
-        mounted: function(){
+        mounted(){
             this.init();
         },
     };

@@ -4,7 +4,6 @@
 
 <script>
 
-import * as Three from 'three';
 import shapeMixin from './AbstractView';
 import { createNamespacedHelpers } from 'vuex';
 
@@ -19,7 +18,7 @@ export default {
         },
 
         methods: {
-            init: function() {
+            init() {
                 var elements = this.finalSceneElements();
                 document.getElementById('rasterizecontrol').appendChild(elements.renderer.domElement);
             },
@@ -31,7 +30,7 @@ export default {
             }
         },
 
-        mounted: function(){
+        mounted(){
             this.init();
         },
     };

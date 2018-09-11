@@ -1,12 +1,9 @@
 <template>
-  <div>  
     <div id="inputcontrol"></div>
-  </div>
 </template>
 
 <script>
 
-import * as Three from 'three';
 import shapeMixin from './AbstractView';
 import { createNamespacedHelpers } from 'vuex';
 
