@@ -5,60 +5,34 @@
 <script>
 
 import * as Three from 'three';
+import shapeMixin from './AbstractView';
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 
 export default {
 
-        data: function() {
-
-            return{
-                finalSize: 1,
-                renderer: new Three.WebGLRenderer( { antialias: true } ),
-                scene: new Three.Scene(),
-                camera: new Three.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 ),
-                geometry: new Three.BoxGeometry( 200, 200, 200),
-                material: new Three.MeshBasicMaterial({ color: 0x00FF00, wireframe: true }),
-                cube: new Three.Mesh(),
-            }
-        },
+        mixins: [shapeMixin],
 
         computed: {
-            ...mapGetters(['scale', 'displayWidth', 'displayHeight']),
+            ...mapGetters(['color']),
         },
-        
+
         methods: {
-            ...mapActions([
-                'increment',
-                'decrement',
-            ]),
-
             init: function() {
-                this.cube = new Three.Mesh(this.geometry, this.material);
-                this.cube.name = 'myCube';
-                this.camera.position.z = 400;
-                this.scene.add(this.cube);
-                this.renderer.setPixelRatio(window.devicePixelRatio);
-                this.renderer.setSize(this.displayWidth, this.displayHeight);
-                document.getElementById('primitivecontrol').appendChild(this.renderer.domElement); 
+                var elements = this.finalSceneElements();
+                document.getElementById('primitivecontrol').appendChild(elements.renderer.domElement);
             },
+        },
 
-            animate: function(){
-                requestAnimationFrame(this.animate);
-                this.cube.rotation.x += 0.01;
-                this.renderer.render(this.scene, this.camera);
-            }        },
-        
         watch: {
-            scale: function(){
-                this.cube.scale.set(this.scale, this.scale, this.scale);
+            color() {
+                //this.updateColors(this.color);
             }
         },
 
         mounted: function(){
             this.init();
-            this.animate();
         },
     };
 </script>
