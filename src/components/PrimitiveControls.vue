@@ -19,7 +19,7 @@ const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 export class PrimitiveControl extends mixins(AbstractView) {
     private mounted() {
         const elements = this.finalSceneElements();
-        this.$el.appendChild(elements.renderer.domElement)
+        this.$el.appendChild(elements.renderer.domElement);
     }
 
     @Watch('color')
