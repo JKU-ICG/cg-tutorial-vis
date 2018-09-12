@@ -29,15 +29,4 @@ const { mapGetters, mapActions } = createNamespacedHelpers('cubestore');
   },
 })
 export default class Toolbar extends Vue { }
-// the mixin doesn't make sense here, since we want to show the color picker
-// export default class Toolbar extends mixins(AbstractView) {
-//   private init() {
-//     const elements = this.finalSceneElements();
-//     document.getElementById('toolbar')!.appendChild(elements.renderer.domElement);
-//   }
-
-//   private mounted() {
-//     this.init();
-//   }
-// }
 </script>
