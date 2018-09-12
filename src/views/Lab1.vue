@@ -10,10 +10,10 @@
   </div>
 </template>
 
-<style>
+<style lang="scss">
 .grid {
   display: grid;
-  grid-template-rows: 250px 250px;
+  //grid-template-rows: 250px 250px;
   grid-template-columns: 50% 50%;
 }
 </style>
@@ -35,5 +35,5 @@ import OutputControls from '@/components/OutputControls.vue';
     OutputControls,
   },
 })
-export default class Lab1 extends Vue {}
+export default class Lab1 extends Vue { }
 </script>
