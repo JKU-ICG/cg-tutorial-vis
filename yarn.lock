@@ -616,7 +616,7 @@
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@vue/cli-overlay/-/cli-overlay-3.0.2.tgz#18411420798135295fe80523579b22e4c6bb3d3b"
 
-"@vue/cli-plugin-babel@^3.0.0-rc.7":
+"@vue/cli-plugin-babel@^3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@vue/cli-plugin-babel/-/cli-plugin-babel-3.0.3.tgz#967ef902553c1c6152ef6330cb05816a730dfdb5"
   dependencies:
@@ -624,14 +624,14 @@
     "@vue/babel-preset-app" "^3.0.1"
     babel-loader "^8.0.0-0"
 
-"@vue/cli-plugin-pwa@^3.0.0-rc.7":
+"@vue/cli-plugin-pwa@^3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@vue/cli-plugin-pwa/-/cli-plugin-pwa-3.0.3.tgz#dad0819f004ae20853dfdf4c4f75a2df0e29e861"
   dependencies:
     "@vue/cli-shared-utils" "^3.0.2"
     workbox-webpack-plugin "^3.3.1"
 
-"@vue/cli-plugin-typescript@^3.0.0-rc.7":
+"@vue/cli-plugin-typescript@^3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@vue/cli-plugin-typescript/-/cli-plugin-typescript-3.0.3.tgz#6672f85cc50dcc2dd617fa674d53036d70eae411"
   dependencies:
@@ -642,7 +642,7 @@
     ts-loader "^4.4.2"
     tslint "^5.10.0"
 
-"@vue/cli-service@^3.0.0-rc.7":
+"@vue/cli-service@^3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@vue/cli-service/-/cli-service-3.0.3.tgz#dd91f2ee40922001559601d458209e4398887337"
   dependencies:
@@ -6407,9 +6407,9 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@^2.9.0:
-  version "2.9.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.9.2.tgz#1cbf61d05d6b96269244eb6a3bce4bd914e0f00c"
+typescript@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.0.3.tgz#4853b3e275ecdaa27f78fda46dc273a7eb7fc1c8"
 
 uglify-es@^3.3.4:
   version "3.3.9"
@@ -6674,10 +6674,6 @@ vue-template-compiler@^2.5.16:
 vue-template-es2015-compiler@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.6.0.tgz#dc42697133302ce3017524356a6c61b7b69b4a18"
-
-vue-threejs@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/vue-threejs/-/vue-threejs-0.1.1.tgz#f669548b9bc72bb8fca2002143fb5cf5a8bf8722"
 
 vue@>=2.0.0, vue@^2.5.16:
   version "2.5.17"
