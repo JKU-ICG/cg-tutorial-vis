@@ -1,5 +1,5 @@
 <template>   
-    <div id="inputcontrol"/>
+    <div></div>
 </template>
 
 <script lang="ts">
@@ -17,13 +17,9 @@ const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
     },
 })
 export class InputControl extends mixins(AbstractView) {
-    private init() {
-        const elements = this.finalSceneElements();
-        document.getElementById('inputcontrol')!.appendChild(elements.renderer.domElement);
-    }
-
     private mounted() {
-        this.init();
+        const elements = this.finalSceneElements();
+        this.$el.appendChild(elements.renderer.domElement)
     }
 
     @Watch('color')
