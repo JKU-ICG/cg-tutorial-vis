@@ -18,8 +18,7 @@ const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 })
 export class InputControl extends mixins(AbstractView) {
     private mounted() {
-        const elements = this.finalSceneElements();
-        this.$el.appendChild(elements.renderer.domElement);
+        this.init();
     }
 
     @Watch('color')

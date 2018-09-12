@@ -15,6 +15,11 @@ export class AbstractView extends Vue {
   protected geometries: BufferGeometry[] = [];
   protected shapes: Mesh[] = [];
 
+  protected init() {
+    const elements = this.finalSceneElements();
+    this.$el.appendChild(elements.renderer.domElement);
+  }
+
   protected createSquare() {
     const vertices = new Float32Array([
       -50.0, -50.0, 50.0,
@@ -111,7 +116,7 @@ export class AbstractView extends Vue {
           color.b / 255.0,
         );
       }
-      (geometry.attributes.color as any).needsUpdate = true;
+      (geometry.attributes.color as BufferAttribute).needsUpdate = true;
     });
 
     this.renderer.render(this.scene, this.camera);
