@@ -1,4 +1,4 @@
-# Computer Graphics Tutorial Visualization
+# Computer Graphics Tutorial
 
 Interactive tutorial to explain the computer graphics rendering pipeline.
 
