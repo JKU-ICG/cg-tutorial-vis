@@ -2,36 +2,35 @@
     <div id="primitivecontrol"/>
 </template>
 
-<script>
-
-import shapeMixin from './AbstractView';
+<script lang="ts">
+import { AbstractView } from './AbstractView.vue';
 import { createNamespacedHelpers } from 'vuex';
+import { Component, Prop, Watch } from 'vue-property-decorator';
+import { mixins } from 'vue-class-component';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 
-export default {
+@Component({
+    name: 'primitive-control',
+    computed: {
+        ...mapGetters(['color']),
+    },
+})
+export class PrimitiveControl extends mixins(AbstractView) {
+    private init() {
+        const elements = this.finalSceneElements();
+        document.getElementById('primitivecontrol')!.appendChild(elements.renderer.domElement);
+    }
 
-        mixins: [shapeMixin],
+    private mounted() {
+        this.init();
+    }
 
-        computed: {
-            ...mapGetters(['color']),
-        },
+    @Watch('color')
+    private onColorChanged(val: string, oldVal: string) {
+        this.updateMaterial();
+    }
+}
 
-        methods: {
-            init() {
-                var elements = this.finalSceneElements();
-                document.getElementById('primitivecontrol').appendChild(elements.renderer.domElement);
-            },
-        },
-
-        watch: {
-            color() {
-                this.updateMaterial();
-            }
-        },
-
-        mounted(){
-            this.init();
-        },
-    };
+export default PrimitiveControl;
 </script>

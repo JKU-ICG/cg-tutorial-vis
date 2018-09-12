@@ -2,36 +2,35 @@
     <div id="outputcontrol"/>
 </template>
 
-<script>
-
-import shapeMixin from './AbstractView';
+<script lang="ts">
+import { AbstractView } from './AbstractView.vue';
 import { createNamespacedHelpers } from 'vuex';
+import { Component, Prop, Watch } from 'vue-property-decorator';
+import { mixins } from 'vue-class-component';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 
-export default {
+@Component({
+    name: 'output-control',
+    computed: {
+        ...mapGetters(['color']),
+    },
+})
+export class OutputControl extends mixins(AbstractView) {
+    private init() {
+        const elements = this.finalSceneElements();
+        document.getElementById('outputcontrol')!.appendChild(elements.renderer.domElement);
+    }
 
-            mixins: [shapeMixin],
+    private mounted() {
+        this.init();
+    }
 
-        computed: {
-            ...mapGetters(['color']),
-        },
+    @Watch('color')
+    private onColorChanged(val: string, oldVal: string) {
+        this.updateColors(val);
+    }
+}
 
-        methods: {
-            init() {
-                var elements = this.finalSceneElements();
-                document.getElementById('outputcontrol').appendChild(elements.renderer.domElement);
-            },
-        },
-
-        watch: {
-            color() {
-                this.updateColors(this.color);
-            }
-        },
-
-        mounted(){
-            this.init();
-        },
-    };
+export default OutputControl;
 </script>
