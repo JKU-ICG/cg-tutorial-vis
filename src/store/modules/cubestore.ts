@@ -1,13 +1,13 @@
 // initial state
-const state = {
+const cubeState = {
     scale: 0.1,
     displayWidth: window.innerWidth / 2,
-    displayHeight: window.innerHeight / 2,    
-    color: { r: 255, g: 0, b: 0 },
+    displayHeight: window.innerHeight / 2,
+    color: { r: 66, g: 185, b: 131, a: 255 },
 };
 
 // getters
-const getters = {
+const cubeGetters = {
     scale: (state: any) => state.scale,
     displayWidth: (state: any) => state.displayWidth,
     displayHeight: (state: any) => state.displayHeight,
@@ -15,7 +15,7 @@ const getters = {
 };
 
 // actions
-const actions = {
+const cubeActions = {
     increment: ({ commit }: any) => {
         commit('increment');
     },
@@ -28,7 +28,7 @@ const actions = {
 };
 
 // mutations
-const mutations = {
+const cubeMutations = {
     increment(state: any) {
         state.scale += 0.1;
     },
@@ -42,8 +42,8 @@ const mutations = {
 
 export default {
     namespaced: true,
-    state,
-    getters,
-    actions,
-    mutations,
+    state: cubeState,
+    getters: cubeGetters,
+    actions: cubeActions,
+    mutations: cubeMutations,
 };

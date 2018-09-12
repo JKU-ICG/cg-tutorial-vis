@@ -1,11 +1,11 @@
 // initial state
-const state = {
+const counterState = {
     count: 0,
     history: [],
 };
 
 // getters
-const getters = {
+const counterGetters = {
     count: (state: any) => state.count,
     limit: () => 5,
     recentHistory: (state: any, getters: any) => {
@@ -18,7 +18,7 @@ const getters = {
 };
 
 // actions
-const actions = {
+const counterActions = {
     increment: ({ commit }: any) => {
         commit('increment');
     },
@@ -38,7 +38,7 @@ const actions = {
 };
 
 // mutations
-const mutations = {
+const counterMutations = {
     increment(state: any) {
         state.count++;
         state.history.push('increment');
@@ -51,8 +51,8 @@ const mutations = {
 
 export default {
     namespaced: true,
-    state,
-    getters,
-    actions,
-    mutations,
+    state: counterState,
+    getters: counterGetters,
+    actions: counterActions,
+    mutations: counterMutations,
 };
