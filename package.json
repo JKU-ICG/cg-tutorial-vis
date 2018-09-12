@@ -1,5 +1,5 @@
 {
-  "name": "explanatory-cg-viz",
+  "name": "cg-tutorial-vis",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,25 +11,26 @@
     "register-service-worker": "^1.0.0",
     "vue": "^2.5.16",
     "vue-class-component": "^6.0.0",
-    "vue-color": "^2.6.0",
     "vue-property-decorator": "^7.0.0",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.0.0-rc.7",
-    "@vue/cli-plugin-pwa": "^3.0.0-rc.7",
-    "@vue/cli-plugin-typescript": "^3.0.0-rc.7",
-    "@vue/cli-service": "^3.0.0-rc.7",
-    "node-sass": "^4.9.0",
-    "sass-loader": "^7.0.1",
-    "typescript": "^2.9.0",
-    "vue-template-compiler": "^2.5.16",
-    "vue-threejs": "^0.1.1",
-    "ajv-keywords": "3.2.0",
-    "three": "^0.94.0",
     "@types/three": "^0.92.18",
+    "@types/vue-color": "^2.4.0",
+    "@vue/cli-plugin-babel": "^3.0.3",
+    "@vue/cli-plugin-pwa": "^3.0.3",
+    "@vue/cli-plugin-typescript": "^3.0.3",
+    "@vue/cli-service": "^3.0.3",
+    "ajv-keywords": "3.2.0",
     "dat.gui": "^0.7.2",
-    "oimo": "^1.0.9"
+    "node-sass": "^4.9.0",
+    "oimo": "^1.0.9",
+    "sass-loader": "^7.0.1",
+    "three": "0.96.0",
+    "typescript": "^3.0.3",
+    "vue-color": "^2.6.0",
+    "vue-template-compiler": "^2.5.16",
+    "vue-threejs": "^0.1.1"
   }
 }
