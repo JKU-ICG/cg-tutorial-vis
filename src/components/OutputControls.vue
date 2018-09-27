@@ -13,7 +13,7 @@ const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 @Component({
     name: 'output-control',
     computed: {
-        ...mapGetters(['color']),
+        ...mapGetters(['color', 'objects']),
     },
 })
 export class OutputControl extends mixins(AbstractView) {
@@ -24,6 +24,11 @@ export class OutputControl extends mixins(AbstractView) {
     @Watch('color')
     private onColorChanged(val: string, oldVal: string) {
         this.updateColors(val);
+    }
+
+    @Watch('objects')
+    private onObjectAdded() {
+        this.renderScene();
     }
 }
 

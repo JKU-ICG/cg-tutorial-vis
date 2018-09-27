@@ -1,93 +1,39 @@
 <script lang="ts">
 import Vue from 'vue';
-import Component from 'vue-class-component';
+import { createNamespacedHelpers } from 'vuex';
+import { Component, Watch } from 'vue-property-decorator';
 import {
   Mesh, Scene, WebGLRenderer, PerspectiveCamera,
   BufferGeometry, BoxBufferGeometry, SphereBufferGeometry,
   BufferAttribute, Color, MeshBasicMaterial, VertexColors,
 } from 'three';
 
-@Component({})
+const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
+
+@Component({
+  computed: {
+    ...mapGetters(['objects']),
+  },
+})
 export class AbstractView extends Vue {
   protected scene = new Scene();
   protected renderer = new WebGLRenderer({ antialias: true });
   protected camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
   protected geometries: BufferGeometry[] = [];
   protected shapes: Mesh[] = [];
+  protected pos = 0;
 
   protected init() {
-    const elements = this.finalSceneElements();
-    this.$el.appendChild(elements.renderer.domElement);
-  }
-
-  protected createSquare() {
-    const vertices = new Float32Array([
-      -50.0, -50.0, 50.0,
-      50.0, -50.0, 50.0,
-      50.0, 50.0, 50.0,
-      50.0, 50.0, 50.0,
-      -50.0, 50.0, 50.0,
-      -50.0, -50.0, 50.0,
-    ]);
-    const customGeometry = new BufferGeometry();
-    customGeometry.addAttribute('position', new BufferAttribute(vertices, 3));
-    this.geometries.push(customGeometry);
-  }
-
-  protected createCube() {
-    const customGeometry = new BoxBufferGeometry(50, 50, 50);
-    this.geometries.push(customGeometry);
-  }
-
-  protected createSphere() {
-    const customGeometry = new SphereBufferGeometry(0.5, 32, 32);
-    this.geometries.push(customGeometry);
-  }
-
-  protected appendObjectsToToolbar() {
-    // Modify renderer and scale the objects, also create a different scenegraph
-    // because toolbar will contain more objects
     this.scene.background = new Color(0xf0f0f0);
-    this.createSquare();
-    this.createCube();
-
-    const material = new MeshBasicMaterial({ color: 0xff00ff });
-    let pos = 0;
-
-    this.geometries.forEach((geometry) => {
-      const shape = new Mesh(geometry, material);
-      // just for differentiating
-      shape.position.x = pos;
-      shape.position.y = pos;
-      shape.position.z = pos;
-      shape.rotation.x = 0.01;
-      pos = pos + 60;
-      this.shapes.push(shape);
-      this.scene.add(shape);
-    });
+    this.camera.position.z = 400;
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
+    this.renderScene();
+    this.$el.appendChild(this.renderer.domElement);
   }
 
-  protected appendObjectsToScene() {
-    this.scene.background = new Color(0xf0f0f0);
-    this.createSquare();
-    this.createCube();
-
-    const material = new MeshBasicMaterial({
-      vertexColors: VertexColors,
-    });
-    let pos = 0;
-
-    this.geometries.forEach((geometry) => {
-      const shape = new Mesh(geometry, material);
-      // just for differentiating
-      shape.position.x = pos;
-      shape.position.y = pos;
-      shape.position.z = pos;
-      shape.rotation.x = 0.01;
-      pos = pos + 60;
-      this.shapes.push(shape);
-      this.scene.add(shape);
-    });
+  protected renderScene() {
+    this.renderer.render(this.scene, this.camera);
   }
 
   protected updateMaterial() {
@@ -122,18 +68,54 @@ export class AbstractView extends Vue {
     this.renderer.render(this.scene, this.camera);
   }
 
-  protected finalSceneElements() {
-    this.appendObjectsToScene();
-    this.camera.position.z = 400;
-    this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
-    this.renderer.render(this.scene, this.camera);
+  @Watch('objects')
+  private onObjectsClicked(object: string) {
+    if (object.localeCompare('square') === 0) {
+      this.createSquare();
 
-    return {
-      scene: this.scene,
-      renderer: this.renderer,
-      camera: this.camera,
-    };
+    } else if (object.localeCompare('cube') === 0) {
+      this.createCube();
+
+    } else if (object.localeCompare('sphere') === 0) {
+      this.createSphere();
+
+    }
+  }
+
+  private appendShapeToScene(geometry: BufferGeometry) {
+    this.geometries.push(geometry);
+    const material = new MeshBasicMaterial({
+      vertexColors: VertexColors,
+    });
+    const shape = new Mesh(geometry, material);
+    // just for differentiating
+    shape.position.x = this.pos;
+    this.pos = this.pos + 100;
+    this.shapes.push(shape);
+    this.scene.add(shape);
+  }
+  private createSquare() {
+    const vertices = new Float32Array([
+      -50.0, -50.0, 50.0,
+      50.0, -50.0, 50.0,
+      50.0, 50.0, 50.0,
+      50.0, 50.0, 50.0,
+      -50.0, 50.0, 50.0,
+      -50.0, -50.0, 50.0,
+    ]);
+    const customGeometry = new BufferGeometry();
+    customGeometry.addAttribute('position', new BufferAttribute(vertices, 3));
+    this.appendShapeToScene(customGeometry);
+  }
+
+  private createCube() {
+    const customGeometry = new BoxBufferGeometry(50, 50, 50);
+    this.appendShapeToScene(customGeometry);
+  }
+
+  private createSphere() {
+    const customGeometry = new SphereBufferGeometry(50, 32, 32);
+    this.appendShapeToScene(customGeometry);
   }
 }
 
