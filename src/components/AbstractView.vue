@@ -69,7 +69,13 @@ export class AbstractView extends Vue {
   }
 
   @Watch('objects')
-  private onObjectsClicked(object: string) {
+  private onObjectsClicked(objects: string[]) {
+    if (objects.length <= 0) {
+      return;
+    }
+
+    const object = objects[objects.length - 1];
+
     if (object.localeCompare('square') === 0) {
       this.createSquare();
 

@@ -7,7 +7,7 @@ const cubeState = {
     displayWidth: window.innerWidth / 2,
     displayHeight: window.innerHeight / 2,
     color: { r: 66, g: 185, b: 131, a: 255 },
-    objects: '',
+    objects: [],
 };
 
 // getters
@@ -30,7 +30,7 @@ const cubeActions = {
     setColor: ({ commit }: any, newColor: any) => {
         commit('setColor', newColor);
     },
-    addObject: ({ commit }: any, newObject: any) => {
+    addObject: ({ commit }: any, newObject: string) => {
         commit('addObject', newObject);
     },
 };
@@ -46,8 +46,8 @@ const cubeMutations = {
     setColor(state: any, newColor: any) {
         state.color = newColor.rgba;
     },
-    addObject(state: any, newObject: any) {
-        state.objects = newObject;
+    addObject(state: any, newObject: string) {
+        state.objects.push(newObject);
     },
 };
 
