@@ -5,8 +5,10 @@ import { Component, Watch } from 'vue-property-decorator';
 import {
   Mesh, Scene, WebGLRenderer, PerspectiveCamera,
   BufferGeometry, BoxBufferGeometry, SphereBufferGeometry,
-  BufferAttribute, Color, MeshBasicMaterial, VertexColors, TrackballControls,
+  BufferAttribute, Color, MeshBasicMaterial, VertexColors,
 } from 'three';
+import { DragControls } from '../lib/three-dragcontrols';
+import { TrackballControls } from '../lib/three-trackballcontrols';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 
@@ -30,7 +32,7 @@ export class AbstractView extends Vue {
     this.camera.position.z = 400;
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
-    this.controls = new TrackballControls(this.camera);
+    this.controls = new TrackballControls(this.camera, this.renderer.domElement);
     this.controls.rotateSpeed = 1.0;
     this.dragControls = new DragControls(this.shapes, this.camera, this.renderer.domElement);
     this.dragControls.addEventListener('dragstart', this.toggleControls(event, false));
