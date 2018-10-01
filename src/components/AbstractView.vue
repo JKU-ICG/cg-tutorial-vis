@@ -7,8 +7,8 @@ import {
   BufferGeometry, BoxBufferGeometry, SphereBufferGeometry,
   BufferAttribute, Color, MeshBasicMaterial, VertexColors,
 } from 'three';
+
 import { DragControls } from '../lib/three-dragcontrols';
-import { TrackballControls } from '../lib/three-trackballcontrols';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 
@@ -24,7 +24,6 @@ export class AbstractView extends Vue {
   protected geometries: BufferGeometry[] = [];
   protected shapes: Mesh[] = [];
   protected dragControls: any;
-  protected controls: any;
   protected pos = 0;
 
   protected init() {
@@ -32,21 +31,21 @@ export class AbstractView extends Vue {
     this.camera.position.z = 400;
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
-    this.controls = new TrackballControls(this.camera, this.renderer.domElement);
-    this.controls.rotateSpeed = 1.0;
-    this.dragControls = new DragControls(this.shapes, this.camera, this.renderer.domElement);
-    this.dragControls.addEventListener('dragstart', this.toggleControls(event, false));
-    this.dragControls.addEventListener('dragstop', this.toggleControls(event, true));
     this.renderScene();
     this.$el.appendChild(this.renderer.domElement);
   }
 
-  protected toggleControls(event: any, flag: boolean) {
-    this.controls.enabled = flag;
+  protected initDragShapes() {
+    this.dragControls = new DragControls(this.shapes, this.camera, this.renderer.domElement);
   }
+
   protected renderScene() {
-    this.controls.update();
     this.renderer.render(this.scene, this.camera);
+    this.geometries.forEach(geometry => {
+      (geometry.attributes.position as BufferAttribute).needsUpdate = true;
+      let positionAttr = geometry.getAttribute('position');
+      console.log(positionAttr.array);
+    });
   }
 
   protected updateMaterial() {

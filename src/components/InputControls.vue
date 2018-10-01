@@ -1,5 +1,5 @@
 <template>   
-    <div></div>
+    <div @mousemove="renderScene"></div>
 </template>
 
 <script lang="ts">
@@ -19,6 +19,7 @@ const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 export class InputControl extends mixins(AbstractView) {
     private mounted() {
         this.init();
+        this.initDragShapes();
     }
 
     @Watch('color')
