@@ -1,5 +1,5 @@
-<template>   
-    <div @mousemove="renderScene"></div>
+<template>
+<div @mousemove="renderScene"></div>
 </template>
 
 <script lang="ts">
@@ -7,6 +7,7 @@ import { AbstractView } from '@/components/AbstractView.vue';
 import { createNamespacedHelpers } from 'vuex';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import { mixins } from 'vue-class-component';
+import { IObjects } from '@/store/modules/IObjects';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 
@@ -28,7 +29,7 @@ export class InputControl extends mixins(AbstractView) {
     }
 
     @Watch('objects')
-    private onObjectAdded() {
+    private onObjectAdded(objects: IObjects) {
         this.renderScene();
     }
 }

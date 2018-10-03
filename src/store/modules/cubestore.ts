@@ -1,5 +1,4 @@
-import { stat } from 'fs';
-import { ADDRCONFIG } from 'dns';
+import { Vector3 } from 'three';
 
 // initial state
 const cubeState = {
@@ -8,6 +7,8 @@ const cubeState = {
     displayHeight: window.innerHeight / 2,
     color: { r: 66, g: 185, b: 131, a: 255 },
     objects: [],
+    object: '',
+    count: 0,
 };
 
 // getters
@@ -17,6 +18,8 @@ const cubeGetters = {
     displayHeight: (state: any) => state.displayHeight,
     color: (state: any) => state.color,
     objects: (state: any) => state.objects,
+    object: (state: any) => state.object,
+    count: (state: any) => state.count,
 };
 
 // actions
@@ -30,8 +33,11 @@ const cubeActions = {
     setColor: ({ commit }: any, newColor: any) => {
         commit('setColor', newColor);
     },
-    addObject: ({ commit }: any, newObject: string) => {
-        commit('addObject', newObject);
+    displayObject: ({ commit }: any, object: string) => {
+        commit('displayObject', object);
+    },
+    pushObject: ({ commit }: any, objectPos: Vector3) => {
+        commit('pushObject', objectPos);
     },
 };
 
@@ -46,8 +52,12 @@ const cubeMutations = {
     setColor(state: any, newColor: any) {
         state.color = newColor.rgba;
     },
-    addObject(state: any, newObject: string) {
-        state.objects.push(newObject);
+    displayObject(state: any, object: string) {
+        state.object = object;
+        state.count += 1;
+    },
+    pushObject(state: any, objectPos: Vector3) {
+        state.objects.push({ name: state.object, position: objectPos });
     },
 };
 

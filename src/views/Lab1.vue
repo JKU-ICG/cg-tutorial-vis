@@ -3,9 +3,9 @@
     <Toolbar/>
     <div class="grid">
       <InputControls/>
-      <!-- <PrimitiveControls/>
+      <PrimitiveControls/>
       <OutputControls/> 
-      <RasterizeControls/> -->
+      <RasterizeControls/>
     </div>
   </div>
 </template>

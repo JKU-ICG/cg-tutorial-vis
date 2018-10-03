@@ -30,7 +30,6 @@ export class PrimitiveControl extends mixins(AbstractView) {
     private onObjectAdded() {
         this.renderScene();
     }
-
 }
 
 export default PrimitiveControl;

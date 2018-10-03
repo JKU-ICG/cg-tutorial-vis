@@ -5,16 +5,20 @@ import { Component, Watch } from 'vue-property-decorator';
 import {
   Mesh, Scene, WebGLRenderer, PerspectiveCamera,
   BufferGeometry, BoxBufferGeometry, SphereBufferGeometry,
-  BufferAttribute, Color, MeshBasicMaterial, VertexColors,
+  BufferAttribute, Color, MeshBasicMaterial, VertexColors, Vector3,
 } from 'three';
 
 import { DragControls } from '../lib/three-dragcontrols';
+import { IObjects } from '@/store/modules/IObjects';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
+const { mapMutations, mapGetters } = createNamespacedHelpers('cubestore');
 
 @Component({
   computed: {
-    ...mapGetters(['objects']),
+    ...mapGetters(['objects', 'object']),
+  },
+  methods: {
+    ...mapMutations(['pushObject']),
   },
 })
 export class AbstractView extends Vue {
@@ -41,17 +45,12 @@ export class AbstractView extends Vue {
 
   protected renderScene() {
     this.renderer.render(this.scene, this.camera);
-    this.geometries.forEach(geometry => {
-      (geometry.attributes.position as BufferAttribute).needsUpdate = true;
-      let positionAttr = geometry.getAttribute('position');
-      console.log(positionAttr.array);
-    });
   }
 
   protected updateMaterial() {
     this.shapes.forEach((shape) => {
       shape.material = new MeshBasicMaterial({
-        color: 0x00ff00,
+        color: 0x000000,
         wireframe: true,
       });
       shape.material.needsUpdate = true;
@@ -80,39 +79,41 @@ export class AbstractView extends Vue {
     this.renderer.render(this.scene, this.camera);
   }
 
-  @Watch('objects')
-  private onObjectsClicked(objects: string[]) {
-    if (objects.length <= 0) {
+  @Watch('object')
+  private addShapeOnClick(shape: string) {
+    let position = new Vector3(0, 0, 0);
+    if (shape.length <= 0) {
       return;
     }
+    if (shape.localeCompare('square') === 0) {
+      position = this.createSquare();
 
-    const object = objects[objects.length - 1];
+    } else if (shape.localeCompare('cube') === 0) {
+      position = this.createCube();
 
-    if (object.localeCompare('square') === 0) {
-      this.createSquare();
-
-    } else if (object.localeCompare('cube') === 0) {
-      this.createCube();
-
-    } else if (object.localeCompare('sphere') === 0) {
-      this.createSphere();
+    } else if (shape.localeCompare('sphere') === 0) {
+      position = this.createSphere();
 
     }
+    this.$store.commit('cubestore/pushObject', position);
   }
 
-  private appendShapeToScene(geometry: BufferGeometry) {
+  private appendShapeToScene(geometry: BufferGeometry): Vector3 {
     this.geometries.push(geometry);
     const material = new MeshBasicMaterial({
       vertexColors: VertexColors,
     });
+
     const shape = new Mesh(geometry, material);
     // just for differentiating
     shape.position.x = this.pos;
     this.pos = this.pos + 100;
     this.shapes.push(shape);
     this.scene.add(shape);
+    return shape.position;
   }
-  private createSquare() {
+
+  private createSquare(): Vector3 {
     const vertices = new Float32Array([
       -50.0, -50.0, 50.0,
       50.0, -50.0, 50.0,
@@ -123,17 +124,17 @@ export class AbstractView extends Vue {
     ]);
     const customGeometry = new BufferGeometry();
     customGeometry.addAttribute('position', new BufferAttribute(vertices, 3));
-    this.appendShapeToScene(customGeometry);
+    return this.appendShapeToScene(customGeometry);
   }
 
-  private createCube() {
+  private createCube(): Vector3 {
     const customGeometry = new BoxBufferGeometry(50, 50, 50);
-    this.appendShapeToScene(customGeometry);
+    return this.appendShapeToScene(customGeometry);
   }
 
-  private createSphere() {
+  private createSphere(): Vector3 {
     const customGeometry = new SphereBufferGeometry(50, 32, 32);
-    this.appendShapeToScene(customGeometry);
+    return this.appendShapeToScene(customGeometry);
   }
 }
 
