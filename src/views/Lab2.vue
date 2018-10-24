@@ -1,18 +1,18 @@
 <template>
   <div class="lab lab2">
     <h1>Lab2</h1>
-    <CounterControls/>
+    <ModelSpace/>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import CounterControls from '@/components/CounterControls.vue'; // @ is an alias to /src
+import ModelSpace from '@/components/ModelSpace.vue';
 
 @Component({
   components: {
-    CounterControls,
+    ModelSpace,
   },
 })
-export default class Lab2 extends Vue {}
+export default class Lab2 extends Vue { }
 </script>
