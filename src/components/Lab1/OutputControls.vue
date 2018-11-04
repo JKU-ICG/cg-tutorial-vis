@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { AbstractView } from '@/components/AbstractView.vue';
+import { AbstractView } from '@/components/Lab1/AbstractView.vue';
 import { createNamespacedHelpers } from 'vuex';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import { mixins } from 'vue-class-component';

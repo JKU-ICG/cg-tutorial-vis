@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { AbstractView } from '@/components/AbstractView.vue';
+import { AbstractView } from '@/components/Lab1/AbstractView.vue';
 import { createNamespacedHelpers } from 'vuex';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import { mixins } from 'vue-class-component';
@@ -11,12 +11,12 @@ import { mixins } from 'vue-class-component';
 const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 
 @Component({
-    name: 'rasterize-control',
+    name: 'input-control',
     computed: {
         ...mapGetters(['color']),
     },
 })
-export class RasterizeControl extends mixins(AbstractView) {
+export class InputControl extends mixins(AbstractView) {
     private mounted() {
         this.init();
     }
@@ -27,5 +27,5 @@ export class RasterizeControl extends mixins(AbstractView) {
     }
 }
 
-export default RasterizeControl;
+export default InputControl;
 </script>

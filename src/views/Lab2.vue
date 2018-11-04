@@ -1,17 +1,27 @@
 <template>
-  <div class="lab lab2">
-    <h1>Lab2</h1>
+  <div class="grid">
     <ModelSpace/>
+    <WorldSpace/>
   </div>
 </template>
 
+<style lang="scss">
+.grid {
+  display: grid;
+  //grid-template-rows: 250px 250px;
+  grid-template-columns: 50% 50%;
+}
+</style>
+
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ModelSpace from '@/components/ModelSpace.vue';
+import ModelSpace from '@/components/Lab2/ModelSpace.vue';
+import WorldSpace from '@/components/Lab2/WorldSpace.vue';
 
 @Component({
   components: {
     ModelSpace,
+    WorldSpace,
   },
 })
 export default class Lab2 extends Vue { }
