@@ -12,7 +12,7 @@ import {
     PerspectiveCamera, OrthographicCamera, Scene,
     WebGLRenderer, Group, BoxBufferGeometry,
     MeshBasicMaterial, EdgesGeometry, LineSegments,
-    BoxHelper, SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color, BufferAttribute} from 'three';
+    BoxHelper, SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color, BufferAttribute, CameraHelper} from 'three';
 import { Watch } from 'vue-property-decorator';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
@@ -39,6 +39,7 @@ export class AbstractSpace extends Vue {
     private objectArrowZ: any;
     private arrowLength = 100;
     private objectCameraXYZ: any;
+    private cameraPerspectiveHelper: any;
     private cubeGeometry = new Mesh(new BoxBufferGeometry(100, 100, 100), new MeshBasicMaterial({ color: 0xc0c0c0 }));
 
     protected init(isWorldOrthographic: boolean, isObjectOrthographic: boolean) {
@@ -77,7 +78,13 @@ export class AbstractSpace extends Vue {
     }
 
     private renderObject() {
+        // this.cameraPerspectiveHelper = new CameraHelper(this.objectCamera);
+        // this.objectScene.add(this.cameraPerspectiveHelper);
+        // this.cameraPerspectiveHelper.update();
+        // this.cameraPerspectiveHelper.visible = true;
         this.objectCamera.position.z = 400;
+        // this.objectCamera.position.x = 400;
+        // this.objectCamera.position.y = 400;
         this.renderer.render(this.objectScene, this.objectCamera);
     }
 
@@ -172,6 +179,21 @@ export class AbstractSpace extends Vue {
         this.objectScaleXYZ[2] = valZ / 2;
         this.cubeGeometry.scale.set(this.objectScaleXYZ[0], this.objectScaleXYZ[1], this.objectScaleXYZ[2]);
         this.renderObject();
+    }
+
+    @Watch('cameraX')
+    private translateCameraX(valX: number) {
+        this.objectCamera.position.x = valX * 100;
+    }
+
+    @Watch('cameraY')
+    private translateCameraY(valY: number) {
+        this.objectCamera.position.y = valY * 100;
+    }
+
+    @Watch('cameraZ')
+    private translateCameraZ(valZ: number) {
+        this.objectCamera.position.z = 400; // valZ * 100;
     }
 }
 
