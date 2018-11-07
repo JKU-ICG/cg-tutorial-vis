@@ -1,7 +1,8 @@
 <template>
   <div class="grid">
+    <InputSlider/>
     <ModelSpace/>
-    <WorldSpace/>
+    <!-- <WorldSpace/> -->
   </div>
 </template>
 
@@ -17,11 +18,13 @@
 import { Component, Vue } from 'vue-property-decorator';
 import ModelSpace from '@/components/Lab2/ModelSpace.vue';
 import WorldSpace from '@/components/Lab2/WorldSpace.vue';
+import InputSlider from '@/components/Lab2/InputSlider.vue';
 
 @Component({
   components: {
     ModelSpace,
     WorldSpace,
+    InputSlider,
   },
 })
 export default class Lab2 extends Vue { }
