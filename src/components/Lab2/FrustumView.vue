@@ -28,6 +28,7 @@ export class FrustumView extends Vue {
     private cameraPerspectiveHelper: any;
     private cameraOrthographic: any;
     private frustumSize = 100;
+    private objectScaleXYZ = [1, 1, 1];
     private scene = new Scene();
     private camera: any;
     private renderer: any;
@@ -86,9 +87,29 @@ export class FrustumView extends Vue {
         this.renderScene();
     }
 
+    @Watch('objectX')
+    private scaleObjectXAxis(valX: number) {
+        this.objectScaleXYZ[0] = valX / 2;
+        this.cube.scale.set(this.objectScaleXYZ[0], this.objectScaleXYZ[1], this.objectScaleXYZ[2]);
+        this.renderScene();
+    }
+
+    @Watch('objectY')
+    private scaleObjectYAxis(valY: number) {
+        this.objectScaleXYZ[1] = valY / 2;
+        this.cube.scale.set(this.objectScaleXYZ[0], this.objectScaleXYZ[1], this.objectScaleXYZ[2]);
+        this.renderScene();
+    }
+
+    @Watch('objectZ')
+    private scaleObjectZAxis(valZ: number) {
+        this.objectScaleXYZ[2] = valZ / 2;
+        this.cube.scale.set(this.objectScaleXYZ[0], this.objectScaleXYZ[1], this.objectScaleXYZ[2]);
+        this.renderScene();
+    }
     @Watch('cameraX')
     private cameraXChanged(valX: number) {
-        this.cameraPerspective.position.x = valX;
+        this.cameraPerspective.position.x = - valX * 100;
         this.renderScene();
     }
 
