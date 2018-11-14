@@ -74,6 +74,8 @@ export class AbstractSpace extends Vue {
 
     private renderWorld() {
         this.worldCamera.position.z = 400;
+        // this.worldCamera.position.x = 400;
+        // this.worldCamera.position.y = 400;
         this.renderer.render(this.worldScene, this.worldCamera);
     }
 
@@ -193,7 +195,7 @@ export class AbstractSpace extends Vue {
 
     @Watch('cameraZ')
     private translateCameraZ(valZ: number) {
-        this.objectCamera.position.z = 400; // valZ * 100;
+        this.objectCamera.position.z = valZ * 100; // flickering issues
     }
 }
 

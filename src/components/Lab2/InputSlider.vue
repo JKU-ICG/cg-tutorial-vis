@@ -1,15 +1,15 @@
 <template>
     <div id = "sliderbar" style="height: 50px; width: 100px">
         <p>
-        <vue-slider ref="slider" v-model='objX'></vue-slider>
-        <vue-slider ref="slider" v-model='objY'></vue-slider>
-        <vue-slider ref="slider" v-model='objZ'></vue-slider>
+        <vue-slider ref="slider" v-model='objX' :min ="1" :max="10"></vue-slider>
+        <vue-slider ref="slider" v-model='objY' :min ="1" :max="10"></vue-slider>
+        <vue-slider ref="slider" v-model='objZ' :min ="1" :max="10"></vue-slider>
         Scale Object
         </p>
         <p> 
-        <vue-slider ref="slider" v-model='camX'></vue-slider>
-        <vue-slider ref="slider" v-model='camY'></vue-slider>
-        <vue-slider ref="slider" v-model='camZ'></vue-slider>
+        <vue-slider ref="slider" v-model='camX' :min ="1" :max="10"></vue-slider>
+        <vue-slider ref="slider" v-model='camY' :min ="1" :max="10"></vue-slider>
+        <vue-slider ref="slider" v-model='camZ' :min ="1" :max="10"></vue-slider>
         Move Object Camera
         </p>
     </div>

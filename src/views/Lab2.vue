@@ -1,8 +1,11 @@
 <template>
-  <div class="grid">
+  <div>
     <InputSlider/>
-    <ModelSpace/>
-    <!-- <WorldSpace/> -->
+    <div class="grid">
+      <ModelSpace/>
+      <OrthoSpace/>
+      <WorldSpace/>
+  </div>
   </div>
 </template>
 
@@ -10,19 +13,21 @@
 .grid {
   display: grid;
   //grid-template-rows: 250px 250px;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 100%;
 }
 </style>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import ModelSpace from '@/components/Lab2/ModelSpace.vue';
+import OrthoSpace from '@/components/Lab2/OrthoSpace.vue';
 import WorldSpace from '@/components/Lab2/WorldSpace.vue';
 import InputSlider from '@/components/Lab2/InputSlider.vue';
 
 @Component({
   components: {
     ModelSpace,
+    OrthoSpace,
     WorldSpace,
     InputSlider,
   },
