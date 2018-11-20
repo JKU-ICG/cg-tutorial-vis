@@ -12,7 +12,7 @@ import { AbstractSpace } from '@/components/Lab2/AbstractSpace.vue';
 export class WorldSpace extends mixins(AbstractSpace) {
 
     private mounted() {
-        this.init(false, false);
+        this.initModelSpace(false);
         this.animate();
     }
 }

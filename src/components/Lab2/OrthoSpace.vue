@@ -7,14 +7,13 @@ import * as Three from 'three';
 import Vue from 'vue';
 import Component, { mixins } from 'vue-class-component';
 import { AbstractSpace } from '@/components/Lab2/AbstractSpace.vue';
-import { FrustumView } from '@/components/Lab2/FrustumView.vue';
 
 @Component({})
-export class OrthoSpace extends mixins(FrustumView) {
+export class OrthoSpace extends mixins(AbstractSpace) {
 
     private mounted() {
-        this.init(true);
-        this.animate();
+        this.initCameraSpace(false);
+        this.animateCameraSpace();
     }
 }
 

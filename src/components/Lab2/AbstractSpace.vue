@@ -24,78 +24,111 @@ const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
         vueSlider,
     },
     computed: {
-        ...mapGetters(['objectX', 'objectY', 'objectZ', 'cameraX', 'cameraY', 'cameraZ']),
+        ...mapGetters(['scaleX', 'scaleY', 'scaleZ', 'translateX', 'translateY', 'translateZ', 'cameraX', 'cameraY', 'cameraZ']),
     },
 })
 export class AbstractSpace extends Vue {
+
+    // Adjust aspect ratio and make it look good
+    // uncomment the commented functionalities
+    // add axis on the cube everywhere
+    // access watch functions from the individual spaces
+    // Camera Properties
     private worldCamera: any;
+    // Perspective Camera Properties
+    private nearPlane = 100;
+    private farPlane = 10000;
+    private fov = 50;
+    // Orthographic Camera Properties
+    private frustumSize = 100;
+    // Object Camera Properties
     private objectCamera: any;
-    private worldScene = new Scene();
-    private objectScene = new Scene();
+    private objectCameraHelper: any;
+    private nearPlaneObj = 100;
+    private farPlaneObj = 200;
+    // Renderer Properties
     private renderer = new WebGLRenderer();
+    private screenWidth = window.innerWidth / 2;
+    private screenHeight = window.innerHeight / 2;
+    private aspectRatio = this.screenWidth / this.screenHeight;
+    // Scene
+    private scene = new Scene();
+    // Object Properties
     private objectScaleXYZ = [1, 1, 1];
     private objectArrowX: any;
     private objectArrowY: any;
     private objectArrowZ: any;
     private arrowLength = 100;
-    private objectCameraXYZ: any;
-    private cameraPerspectiveHelper: any;
-    private cubeGeometry = new Mesh(new BoxBufferGeometry(100, 100, 100), new MeshBasicMaterial({ color: 0xc0c0c0 }));
+    // Cube
+    private cube = new Mesh(new BoxBufferGeometry(100, 100, 100), new MeshBasicMaterial({ color: 0xc0c0c0 }));
+    // MiniWorld Dimensions
 
-    protected init(isWorldOrthographic: boolean, isObjectOrthographic: boolean) {
-        if (isWorldOrthographic) {
-            this.worldCamera = new OrthographicCamera(window.innerWidth / - 2, window.innerWidth / 2,
-                window.innerHeight / 2, window.innerHeight / - 2, 1, 1000);
-        } else {
-            this.worldCamera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-        }
-
-        if (isObjectOrthographic) {
-            this.objectCamera = new OrthographicCamera(window.innerWidth / - 2, window.innerWidth / 2,
-                window.innerHeight / 2, window.innerHeight / - 2, 1, 1000);
-        } else {
-            this.objectCamera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-        }
-
+    protected initCameraSpace(isCameraOrthographic: boolean) {
+        this.worldCamera = new PerspectiveCamera(this.fov, this.aspectRatio, this.nearPlane, this.farPlane);
+        this.worldCamera.position.z = 1500;
+        this.worldCamera.position.x = 0;
+        this.objectCamera = new PerspectiveCamera(this.fov, this.aspectRatio, this.nearPlaneObj, this.farPlaneObj);
+        this.objectCameraHelper = new CameraHelper(this.objectCamera);
+        this.composeCameraScene();
+        this.renderer = new WebGLRenderer({ antialias: true });
         this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
+        this.renderer.setSize(this.screenWidth, this.screenHeight);
+        this.$el.appendChild(this.renderer.domElement);
+        this.renderer.autoClear = false;
+    }
+
+    protected composeCameraScene() {
+        this.miniWorld();
+        this.scene.add(this.objectCameraHelper);
+        this.scene.add(this.objectCamera);
+        this.objectCamera.add(this.cube);
+    }
+
+    protected animateCameraSpace() {
+        requestAnimationFrame(this.animateCameraSpace);
+        this.renderCameraSpace();
+    }
+    protected renderCameraSpace() {
+        this.worldCamera.position.z = 500;
+        const r = Date.now() * 0.0005;
+        this.cube.position.x = 350 * Math.cos(r);
+        this.cube.position.y = 350 * Math.sin(r);
+        this.cube.position.z = -700;
+        // perform update operations
+        this.objectCamera.updateProjectionMatrix();
+        this.objectCameraHelper.update();
+        this.objectCameraHelper.visible = true;
+        this.objectCamera.lookAt(this.cube.position);
+        this.renderer.clear();
+        // render the scene overall as viewed via the object camera
+        this.objectCameraHelper.visible = true;
+        this.renderer.setViewport(0, 0, this.screenWidth / 2, this.screenHeight);
+        this.renderer.render(this.scene, this.worldCamera);
+        // render the scene with the object camera
+        this.objectCameraHelper.visible = false;
+        this.renderer.setViewport(this.screenWidth / 2, 0, this.screenWidth / 2, this.screenHeight);
+        this.renderer.render(this.scene, this.objectCamera);
+    }
+
+    protected initModelSpace(isObjectOrthographic: boolean) {
+        this.worldCamera = new PerspectiveCamera(this.fov, this.aspectRatio, this.nearPlane, this.farPlane);
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setSize(this.screenWidth, this.screenHeight);
         this.composeScene();
-        this.renderScene();
+        this.renderWorld();
         this.$el.appendChild(this.renderer.domElement);
     }
 
     protected animate() {
         requestAnimationFrame(this.animate);
-        this.objectCamera.lookAt(this.objectScene.position);
-        // const time = -performance.now() * 0.0003;
-        // this.objectCamera.position.x = 400 * Math.cos(time); // entire object scene rotation
-        this.renderScene();
+        this.worldCamera.lookAt(this.scene.position);
+        this.cube.rotation.x += 0.01;
+        this.renderWorld();
     }
 
     private renderWorld() {
         this.worldCamera.position.z = 400;
-        // this.worldCamera.position.x = 400;
-        // this.worldCamera.position.y = 400;
-        this.renderer.render(this.worldScene, this.worldCamera);
-    }
-
-    private renderObject() {
-        // this.cameraPerspectiveHelper = new CameraHelper(this.objectCamera);
-        // this.objectScene.add(this.cameraPerspectiveHelper);
-        // this.cameraPerspectiveHelper.update();
-        // this.cameraPerspectiveHelper.visible = true;
-        this.objectCamera.position.z = 400;
-        // this.objectCamera.position.x = 400;
-        // this.objectCamera.position.y = 400;
-        this.renderer.render(this.objectScene, this.objectCamera);
-    }
-
-    private renderScene() {
-        this.renderer.autoClear = false;
-        this.renderer.clear();
-        this.renderWorld();
-        this.renderer.clearDepth();
-        this.renderObject();
+        this.renderer.render(this.scene, this.worldCamera);
     }
 
     private composeScene() {
@@ -114,11 +147,11 @@ export class AbstractSpace extends Vue {
         line.material.opacity = 0.25;
         line.material.transparent = true;
         line.position.x = 0;
-        this.worldScene.add(new BoxHelper(line));
+        this.scene.add(new BoxHelper(line));
     }
 
     private addCube() {
-        this.objectScene.add(this.cubeGeometry);
+        this.scene.add(this.cube);
     }
 
     private addVertices() {
@@ -142,7 +175,7 @@ export class AbstractSpace extends Vue {
             drawSphere.position.y = vertices[i + 1];
             drawSphere.position.z = vertices[i + 2];
             i = i + 3;
-            this.objectScene.add(drawSphere);
+            this.scene.add(drawSphere);
         }
     }
 
@@ -154,48 +187,73 @@ export class AbstractSpace extends Vue {
         this.objectArrowX = new ArrowHelper(dirX, origin, this.arrowLength, 0xff0000);
         this.objectArrowY = new ArrowHelper(dirY, origin, this.arrowLength, 0x00ff00);
         this.objectArrowZ = new ArrowHelper(dirZ, origin, this.arrowLength, 0x0000cc);
-        this.objectScene.add(this.objectArrowX);
-        this.objectScene.add(this.objectArrowY);
-        this.objectScene.add(this.objectArrowZ);
+        this.scene.add(this.objectArrowX);
+        this.scene.add(this.objectArrowY);
+        this.scene.add(this.objectArrowZ);
     }
 
-    @Watch('objectX')
+    private scaleObject() {
+        this.cube.scale.set(this.objectScaleXYZ[0], this.objectScaleXYZ[1], this.objectScaleXYZ[2]);
+        // this.renderWorld();
+        this.renderCameraSpace();
+    }
+
+    @Watch('scaleX') // to be called from individual space modules
     private scaleObjectXAxis(valX: number) {
-        this.objectArrowX.setLength(this.arrowLength * valX);
+        // this.objectArrowX.setLength(this.arrowLength * valX);
         this.objectScaleXYZ[0] = valX / 2;
-        this.cubeGeometry.scale.set(this.objectScaleXYZ[0], this.objectScaleXYZ[1], this.objectScaleXYZ[2]);
-        this.renderObject();
+        this.scaleObject();
     }
 
-    @Watch('objectY')
+    @Watch('scaleY')
     private scaleObjectYAxis(valY: number) {
-        this.objectArrowY.setLength(this.arrowLength * valY);
+        // this.objectArrowY.setLength(this.arrowLength * valY);
         this.objectScaleXYZ[1] = valY / 2;
-        this.cubeGeometry.scale.set(this.objectScaleXYZ[0], this.objectScaleXYZ[1], this.objectScaleXYZ[2]);
-        this.renderObject();
+        this.scaleObject();
     }
 
-    @Watch('objectZ')
+    @Watch('scaleZ')
     private scaleObjectZAxis(valZ: number) {
-        this.objectArrowZ.setLength(this.arrowLength * valZ);
+        // this.objectArrowZ.setLength(this.arrowLength * valZ);
         this.objectScaleXYZ[2] = valZ / 2;
-        this.cubeGeometry.scale.set(this.objectScaleXYZ[0], this.objectScaleXYZ[1], this.objectScaleXYZ[2]);
-        this.renderObject();
+        this.scaleObject();
+    }
+
+    @Watch('translateX')
+    private translateObjX(valX: number) {
+        this.cube.position.x = valX * 10;
+        // this.renderWorld();
+        this.renderCameraSpace();
+    }
+
+    @Watch('translateY')
+    private translateObjY(valY: number) {
+        this.cube.position.y = valY * 10;
+        // this.renderWorld();
+        this.renderCameraSpace();
+    }
+
+    @Watch('translateZ')
+    private translateObjZ(valZ: number) {
+        this.cube.position.z = valZ * 10;
+        // this.renderWorld();
+        this.renderCameraSpace();
     }
 
     @Watch('cameraX')
     private translateCameraX(valX: number) {
-        this.objectCamera.position.x = valX * 100;
+        // cameraSpace things to be dealt here.
+
     }
 
     @Watch('cameraY')
     private translateCameraY(valY: number) {
-        this.objectCamera.position.y = valY * 100;
+
     }
 
     @Watch('cameraZ')
     private translateCameraZ(valZ: number) {
-        this.objectCamera.position.z = valZ * 100; // flickering issues
+
     }
 }
 

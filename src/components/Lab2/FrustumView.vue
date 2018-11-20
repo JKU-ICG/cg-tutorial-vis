@@ -17,36 +17,35 @@ const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
 
 @Component({
     computed: {
-        ...mapGetters(['objectX', 'objectY', 'objectZ', 'cameraX', 'cameraY', 'cameraZ']),
+        ...mapGetters(['scaleX', 'scaleY', 'scaleZ', 'cameraX', 'cameraY', 'cameraZ']),
     },
 })
 export class FrustumView extends Vue {
     private SCREEN_WIDTH = window.innerWidth;
     private SCREEN_HEIGHT = window.innerHeight / 2;
+    private FRUSTUM_SIZE = 100;
+    private OBJ_Z = -700;
+    private objectScaleXYZ = [1, 1, 1];
     private aspect = this.SCREEN_WIDTH / this.SCREEN_HEIGHT;
     private cameraPerspective: any;
-    private cameraPerspectiveHelper: any;
+    private cameraHelper: any;
     private cameraOrthographic: any;
-    private frustumSize = 100;
-    private objectScaleXYZ = [1, 1, 1];
     private scene = new Scene();
     private camera: any;
     private renderer: any;
     private cube = new Mesh(new BoxBufferGeometry(100, 100, 100), new MeshBasicMaterial({ color: 0xc0c0c0 }));
-    private objZ = -700;
+
     private topCamera: any;
     private isOrtho = false;
 
     protected init(isOrtho: boolean = false) {
         this.isOrtho = isOrtho;
+        this.camera = new PerspectiveCamera(50, 0.5 * this.aspect, 1, 10000);
         if (isOrtho) {
-            this.camera = new OrthographicCamera(- this.SCREEN_WIDTH, this.SCREEN_WIDTH,
-                this.SCREEN_HEIGHT, - this.SCREEN_HEIGHT, 1, 10000);
-            this.cameraPerspective = new OrthographicCamera(0.5 * this.frustumSize * this.aspect / - 2,
-                0.5 * this.frustumSize * this.aspect / 2, this.frustumSize / 2, this.frustumSize / - 2, 10, 200);
+            this.cameraPerspective = new OrthographicCamera(0.5 * this.FRUSTUM_SIZE * this.aspect / - 2,
+                0.5 * this.FRUSTUM_SIZE * this.aspect / 2, this.FRUSTUM_SIZE / 2, this.FRUSTUM_SIZE / - 2, 10, 200);
 
         } else {
-            this.camera = new PerspectiveCamera(50, 0.5 * this.aspect, 1, 10000);
             this.cameraPerspective = new PerspectiveCamera(50, 0.5 * this.aspect, 100, 200);
         }
 
@@ -64,10 +63,10 @@ export class FrustumView extends Vue {
         line.rotation.x = 0.4;
         this.scene.add(new BoxHelper(line));
 
-        this.cameraPerspectiveHelper = new CameraHelper(this.cameraPerspective);
+        this.cameraHelper = new CameraHelper(this.cameraPerspective);
 
         // add both the camera and the helper inside the scene
-        this.scene.add(this.cameraPerspectiveHelper);
+        this.scene.add(this.cameraHelper);
         this.scene.add(this.cameraPerspective);
 
         // add the cube inside the camera's perspective
@@ -116,10 +115,10 @@ export class FrustumView extends Vue {
     @Watch('cameraY') // mapped to the fov or to the frustumsize of the orthographic camera
     private cameraYChanged(valY: number) {
         if (this.isOrtho) {
-            this.cameraPerspective.left = 0.5 * valY * this.frustumSize * this.aspect / - 2;
-            this.cameraPerspective.right = 0.5 * valY * this.frustumSize * this.aspect / 2;
-            this.cameraPerspective.top = valY * this.frustumSize / 2;
-            this.cameraPerspective.bottom = - valY * this.frustumSize / 2;
+            this.cameraPerspective.left = 0.5 * valY * this.FRUSTUM_SIZE * this.aspect / - 2;
+            this.cameraPerspective.right = 0.5 * valY * this.FRUSTUM_SIZE * this.aspect / 2;
+            this.cameraPerspective.top = valY * this.FRUSTUM_SIZE / 2;
+            this.cameraPerspective.bottom = - valY * this.FRUSTUM_SIZE / 2;
         } else {
             this.cameraPerspective.fov = valY * 10;
         }
@@ -137,23 +136,23 @@ export class FrustumView extends Vue {
         const r = Date.now() * 0.0005;
         this.cube.position.x = 350 * Math.cos(r);
         this.cube.position.y = 350 * Math.sin(r);
-        this.cube.position.z = this.objZ;
+        this.cube.position.z = this.OBJ_Z;
 
         // perform update operations
         this.cameraPerspective.updateProjectionMatrix();
-        this.cameraPerspectiveHelper.update();
-        this.cameraPerspectiveHelper.visible = true;
+        this.cameraHelper.update();
+        this.cameraHelper.visible = true;
         this.cameraPerspective.lookAt(this.cube.position);
 
         this.renderer.clear();
 
         // render the scene overall as viewed via the perspective camera
-        this.cameraPerspectiveHelper.visible = true;
+        this.cameraHelper.visible = true;
         this.renderer.setViewport(0, 0, this.SCREEN_WIDTH / 2, this.SCREEN_HEIGHT);
         this.renderer.render(this.scene, this.camera);
 
         // render the scene with the perspective camera
-        this.cameraPerspectiveHelper.visible = false;
+        this.cameraHelper.visible = false;
         this.renderer.setViewport(this.SCREEN_WIDTH / 2, 0, this.SCREEN_WIDTH / 2, this.SCREEN_HEIGHT);
         this.renderer.render(this.scene, this.cameraPerspective);
     }

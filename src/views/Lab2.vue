@@ -2,9 +2,9 @@
   <div>
     <InputSlider/>
     <div class="grid">
-      <ModelSpace/>
-      <OrthoSpace/>
+      <!-- <ModelSpace/> -->
       <WorldSpace/>
+      <OrthoSpace/>
   </div>
   </div>
 </template>

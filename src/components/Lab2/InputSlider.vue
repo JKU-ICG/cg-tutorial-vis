@@ -1,9 +1,15 @@
 <template>
     <div id = "sliderbar" style="height: 50px; width: 100px">
         <p>
-        <vue-slider ref="slider" v-model='objX' :min ="1" :max="10"></vue-slider>
-        <vue-slider ref="slider" v-model='objY' :min ="1" :max="10"></vue-slider>
-        <vue-slider ref="slider" v-model='objZ' :min ="1" :max="10"></vue-slider>
+        <vue-slider ref="slider" v-model='scaleX' :min ="1" :max="10"></vue-slider>
+        <vue-slider ref="slider" v-model='scaleY' :min ="1" :max="10"></vue-slider>
+        <vue-slider ref="slider" v-model='scaleZ' :min ="1" :max="10"></vue-slider>
+        Scale Object
+        </p>
+        <p>
+        <vue-slider ref="slider" v-model='translateX' :min ="1" :max="10"></vue-slider>
+        <vue-slider ref="slider" v-model='translateY' :min ="1" :max="10"></vue-slider>
+        <vue-slider ref="slider" v-model='translateZ' :min ="1" :max="10"></vue-slider>
         Scale Object
         </p>
         <p> 
@@ -29,26 +35,44 @@ const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
     },
 })
 export default class InputSlider extends Vue {
-    private objX = 1;
-    private objY = 1;
-    private objZ = 1;
+    private scaleX = 1;
+    private scaleY = 1;
+    private scaleZ = 1;
+    private translateX = 1;
+    private translateY = 1;
+    private translateZ = 1;
     private camX = 1;
     private camY = 1;
     private camZ = 1;
 
-    @Watch('objX')
-    private onXChanged(valX: number) {
-        this.$store.dispatch('inputslider/setObjectX', valX);
+    @Watch('scaleX')
+    private onScaleXChanged(valX: number) {
+        this.$store.dispatch('inputslider/setScaleX', valX);
     }
 
-    @Watch('objY')
-    private onYChanged(valY: number) {
-        this.$store.dispatch('inputslider/setObjectY', valY);
+    @Watch('scaleY')
+    private onScaleYChanged(valY: number) {
+        this.$store.dispatch('inputslider/setScaleY', valY);
     }
 
-    @Watch('objZ')
-    private onZChanged(valZ: number) {
-        this.$store.dispatch('inputslider/setObjectZ', valZ);
+    @Watch('scaleZ')
+    private onScaleZChanged(valZ: number) {
+        this.$store.dispatch('inputslider/setScaleZ', valZ);
+    }
+
+    @Watch('translateX')
+    private onTranslateXChanged(valX: number) {
+        this.$store.dispatch('inputslider/setTranslateX', valX);
+    }
+
+    @Watch('translateY')
+    private onTranslateYChanged(valY: number) {
+        this.$store.dispatch('inputslider/setTranslateY', valY);
+    }
+
+    @Watch('translateZ')
+    private onTranslateZChanged(valZ: number) {
+        this.$store.dispatch('inputslider/setTranslateZ', valZ);
     }
 
     @Watch('camX')

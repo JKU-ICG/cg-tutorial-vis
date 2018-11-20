@@ -1,8 +1,11 @@
 // initial state
 const inputState = {
-    objectX: 1,
-    objectY: 1,
-    objectZ: 1,
+    scaleX: 1,
+    scaleY: 1,
+    scaleZ: 1,
+    translateX: 1,
+    translateY: 1,
+    translateZ: 1,
     cameraX: 1,
     cameraY: 1,
     cameraZ: 1,
@@ -10,9 +13,12 @@ const inputState = {
 
 // getters
 const inputGetters = {
-    objectX: (state: any) => state.objectX,
-    objectY: (state: any) => state.objectY,
-    objectZ: (state: any) => state.objectZ,
+    scaleX: (state: any) => state.scaleX,
+    scaleY: (state: any) => state.scaleY,
+    scaleZ: (state: any) => state.scaleZ,
+    translateX: (state: any) => state.translateX,
+    translateY: (state: any) => state.translateY,
+    translateZ: (state: any) => state.translateZ,
     cameraX: (state: any) => state.cameraX,
     cameraY: (state: any) => state.cameraY,
     cameraZ: (state: any) => state.cameraZ,
@@ -20,14 +26,23 @@ const inputGetters = {
 
 // actions
 const inputActions = {
-    setObjectX: ({ commit }: any, newObjectX: number) => {
-        commit('setObjectX', newObjectX);
+    setScaleX: ({ commit }: any, newScaleX: number) => {
+        commit('setScaleX', newScaleX);
     },
-    setObjectY: ({ commit }: any, newObjectY: number) => {
-        commit('setObjectY', newObjectY);
+    setScaleY: ({ commit }: any, newScaleY: number) => {
+        commit('setScaleY', newScaleY);
     },
-    setObjectZ: ({ commit }: any, newObjectZ: number) => {
-        commit('setObjectZ', newObjectZ);
+    setScaleZ: ({ commit }: any, newScaleZ: number) => {
+        commit('setScaleZ', newScaleZ);
+    },
+    setTranslateX: ({ commit }: any, newTranslateX: number) => {
+        commit('setTranslateX', newTranslateX);
+    },
+    setTranslateY: ({ commit }: any, newTranslateY: number) => {
+        commit('setTranslateY', newTranslateY);
+    },
+    setTranslateZ: ({ commit }: any, newTranslateZ: number) => {
+        commit('setTranslateZ', newTranslateZ);
     },
     setCameraX: ({ commit }: any, newCameraX: number) => {
         commit('setCameraX', newCameraX);
@@ -42,14 +57,23 @@ const inputActions = {
 
 // mutations
 const inputMutations = {
-    setObjectX(state: any, newObjectX: number) {
-        state.objectX = newObjectX;
+    setScaleX(state: any, newScaleX: number) {
+        state.scaleX = newScaleX;
     },
-    setObjectY(state: any, newObjectY: number) {
-        state.objectY = newObjectY;
+    setScaleY(state: any, newScaleY: number) {
+        state.scaleY = newScaleY;
     },
-    setObjectZ(state: any, newObjectZ: number) {
-        state.objectZ = newObjectZ;
+    setScaleZ(state: any, newScaleZ: number) {
+        state.scaleZ = newScaleZ;
+    },
+    setTranslateX(state: any, newTranslateX: number) {
+        state.translateX = newTranslateX;
+    },
+    setTranslateY(state: any, newTranslateY: number) {
+        state.translateY = newTranslateY;
+    },
+    setTranslateZ(state: any, newTranslateZ: number) {
+        state.translateZ = newTranslateZ;
     },
     setCameraX(state: any, newCameraX: number) {
         state.cameraX = newCameraX;
