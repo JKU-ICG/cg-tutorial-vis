@@ -14,13 +14,31 @@ const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
 
 @Component({
     computed: {
-        ...mapGetters(['translateX', 'translateY', 'translateZ']),
+        ...mapGetters(['scaleX', 'scaleY', 'scaleZ', 'translateX', 'translateY', 'translateZ']),
     }})
 export class ModelView extends mixins(AbstractSpace) {
 
     private mounted() {
         this.initModelView();
         this.animateModelView();
+    }
+
+    @Watch('scaleX')
+    private scaleObjectX(valX: number) {
+        this.scaleObjectXAxis(valX);
+        this.renderWorldCameraView();
+    }
+
+    @Watch('scaleY')
+    private scaleObjectY(valY: number) {
+        this.scaleObjectYAxis(valY);
+        this.renderWorldCameraView();
+    }
+
+    @Watch('scaleZ')
+    private scaleObjectZ(valZ: number) {
+        this.scaleObjectZAxis(valZ);
+        this.renderWorldCameraView();
     }
 
     @Watch('translateX')

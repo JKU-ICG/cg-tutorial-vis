@@ -5,26 +5,18 @@
 <script lang = "ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { createNamespacedHelpers } from 'vuex';
-
+import { Watch } from 'vue-property-decorator';
+import { isNullOrUndefined } from 'util';
 import {
     PerspectiveCamera, OrthographicCamera, Scene,
     WebGLRenderer, Group, BoxBufferGeometry,
     MeshBasicMaterial, EdgesGeometry, LineSegments,
     BoxHelper, SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color, BufferAttribute, CameraHelper} from 'three';
-import { Watch } from 'vue-property-decorator';
-import { isNullOrUndefined } from 'util';
-
-const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
 
 // Scene comprises of a world and an object
-
-@Component({
-    computed: {
-        ...mapGetters(['scaleX', 'scaleY', 'scaleZ',
-            'cameraX', 'cameraY', 'cameraZ']),
-    },
-})
+// TO DOs: Object translation should also contain negative values.
+// Object axis to be fixed.
+@Component({})
 export class AbstractSpace extends Vue {
 
     // Camera Properties
@@ -60,16 +52,7 @@ export class AbstractSpace extends Vue {
     protected initCameraView(isObjectCameraOrthographic: boolean) {
         this.screenWidth = window.innerWidth; // because of renderering 2 views in one.
         this.worldCamera = new PerspectiveCamera(this.fov, this.aspectRatio, this.nearPlane, this.farPlane);
-        this.worldCamera.position.z = 1500;
-        this.worldCamera.position.x = 0;
-        this.objectCamera = new PerspectiveCamera(this.fov, this.aspectRatio, this.nearPlaneObj, this.farPlaneObj);
-        // Setting object camera properties
-        if (isObjectCameraOrthographic) {
-            this.isObjectCameraOrthographic = isObjectCameraOrthographic;
-            this.objectCamera = new OrthographicCamera(- this.frustumSize, this.frustumSize,
-                this.frustumSize, - this.frustumSize, this.nearPlaneObj, this.farPlaneObj);
-        }
-        this.objectCameraHelper = new CameraHelper(this.objectCamera);
+        this.setObjectCameraProperties(isObjectCameraOrthographic);
         this.composeCameraScene();
         this.renderer = new WebGLRenderer({ antialias: true });
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -78,9 +61,37 @@ export class AbstractSpace extends Vue {
         this.renderer.autoClear = false;
     }
 
+    protected setObjectCameraProperties(isObjectCameraOrthographic?: boolean) {
+        this.objectCamera = new PerspectiveCamera(this.fov, this.aspectRatio, this.nearPlaneObj, this.farPlaneObj);
+        if (isObjectCameraOrthographic) {
+            this.isObjectCameraOrthographic = isObjectCameraOrthographic;
+            this.objectCamera = new OrthographicCamera(- this.frustumSize, this.frustumSize,
+                this.frustumSize, - this.frustumSize, this.nearPlaneObj, this.farPlaneObj);
+        }
+        this.objectCameraHelper = new CameraHelper(this.objectCamera);
+    }
+
     protected animateCameraView() {
         requestAnimationFrame(this.animateCameraView);
         this.renderCameraView();
+    }
+
+    protected scaleObjectXAxis(valX: number) {
+        this.objectArrowX.setLength(this.arrowLength * valX);
+        this.objectScaleXYZ[0] = valX / 2;
+        this.cube.scale.set(this.objectScaleXYZ[0], this.objectScaleXYZ[1], this.objectScaleXYZ[2]);
+    }
+
+    protected scaleObjectYAxis(valY: number) {
+        this.objectArrowY.setLength(this.arrowLength * valY);
+        this.objectScaleXYZ[1] = valY / 2;
+        this.cube.scale.set(this.objectScaleXYZ[0], this.objectScaleXYZ[1], this.objectScaleXYZ[2]);
+    }
+
+    protected scaleObjectZAxis(valZ: number) {
+        this.objectArrowZ.setLength(this.arrowLength * valZ);
+        this.objectScaleXYZ[2] = valZ / 2;
+        this.cube.scale.set(this.objectScaleXYZ[0], this.objectScaleXYZ[1], this.objectScaleXYZ[2]);
     }
 
     protected translateCameraX(valX: number) {
@@ -88,19 +99,22 @@ export class AbstractSpace extends Vue {
         this.renderCameraView();
     }
 
-    protected changeCameraFOV(valY: number) { // ortho pending
+    protected changeCameraFOV(valY: number) {
         if (this.isObjectCameraOrthographic) {
-            this.objectCamera.left = - valY * this.frustumSize;
-            this.objectCamera.right = valY * this.frustumSize;
-            this.objectCamera.top = - valY * this.frustumSize;
-            this.objectCamera.bottom = valY * this.frustumSize;
+            this.frustumSize = valY * 10;
+            this.objectCamera.left = - this.frustumSize;
+            this.objectCamera.right = this.frustumSize;
+            this.objectCamera.top = - this.frustumSize;
+            this.objectCamera.bottom = this.frustumSize;
         }
-        this.objectCamera.fov = valY * 10;
+        this.fov = valY * 10;
+        this.objectCamera.fov = this.fov;
         this.renderCameraView();
     }
 
     protected changeCameraFar(valZ: number) {
-        this.objectCamera.far = valZ * 100;
+        this.farPlaneObj = valZ * 100;
+        this.objectCamera.far = this.farPlaneObj;
         this.renderCameraView();
     }
 
@@ -114,7 +128,7 @@ export class AbstractSpace extends Vue {
     }
 
     protected translateObjZ(valZ: number) {
-        this.cube.position.z = - valZ * 100;
+        this.cube.position.z = valZ * 100;
     }
 
     protected initModelView() {
@@ -131,31 +145,6 @@ export class AbstractSpace extends Vue {
         this.worldCamera.lookAt(this.scene.position);
         this.cube.rotation.x += 0.01;
         this.renderWorldCameraView();
-    }
-
-    protected composeCameraScene() {
-        this.miniWorld();
-        this.scene.add(this.objectCameraHelper);
-        this.scene.add(this.objectCamera);
-        this.objectCamera.add(this.cube);
-        this.addObjectAxis(); // not working?
-    }
-
-    protected renderCameraView() {
-        // const r = Date.now() * 0.0005;
-        // this.cube.position.x = 350 * Math.cos(r);
-        // this.cube.position.y = 350 * Math.sin(r);
-        // this.cube.position.z = -700;
-        // perform update operations
-        this.objectCamera.updateProjectionMatrix();
-        this.objectCameraHelper.update();
-        this.objectCameraHelper.visible = true;
-        this.objectCamera.lookAt(this.cube.position);
-        this.renderer.clear();
-        // render the scene overall as viewed via the world camera
-        this.renderWorldCameraView();
-        // render the scene as viewed via the object camera
-        this.renderObjectCameraView();
     }
 
     protected renderWorldCameraView() {
@@ -175,6 +164,23 @@ export class AbstractSpace extends Vue {
         this.renderer.render(this.scene, this.objectCamera);
     }
 
+    protected renderCameraView(view?: string) {
+        this.objectCamera.updateProjectionMatrix(); // perform update operations
+        this.objectCameraHelper.update();
+        this.objectCameraHelper.visible = true;
+        this.objectCamera.lookAt(this.cube.position);
+        this.renderer.clear();
+        this.renderWorldCameraView(); // render the scene overall as viewed via the world camera
+        this.renderObjectCameraView(); // render the scene as viewed via the object camera
+    }
+
+    private composeCameraScene() {
+        this.miniWorld();
+        this.scene.add(this.objectCameraHelper);
+        this.scene.add(this.objectCamera);
+        this.addCube(); // this.objectCamera.add(this.cube);
+        this.addObjectAxis(); // not working?
+    }
     private composeModelScene() {
         this.miniWorld();
         this.addVertices();
@@ -224,42 +230,16 @@ export class AbstractSpace extends Vue {
     }
 
     private addObjectAxis() {
-        const origin = new Vector3(0, 0, 0);
-        const dirX = new Vector3(1, 0, 0);
-        const dirY = new Vector3(0, 1, 0);
-        const dirZ = new Vector3(0, 0, 1);
+        const origin = new Vector3(this.cube.position.x, this.cube.position.y, this.cube.position.z);
+        const dirX = new Vector3(this.cube.position.x + 1, 0, 0);
+        const dirY = new Vector3(0, this.cube.position.y + 1, 0);
+        const dirZ = new Vector3(0, 0, this.cube.position.z + 1);
         this.objectArrowX = new ArrowHelper(dirX, origin, this.arrowLength, 0xff0000);
         this.objectArrowY = new ArrowHelper(dirY, origin, this.arrowLength, 0x00ff00);
         this.objectArrowZ = new ArrowHelper(dirZ, origin, this.arrowLength, 0x0000cc);
         this.scene.add(this.objectArrowX);
         this.scene.add(this.objectArrowY);
         this.scene.add(this.objectArrowZ);
-    }
-
-    private scaleObject() {
-        this.cube.scale.set(this.objectScaleXYZ[0], this.objectScaleXYZ[1], this.objectScaleXYZ[2]);
-        this.renderWorldCameraView();
-    }
-
-    @Watch('scaleX') // to be called from individual space modules
-    private scaleObjectXAxis(valX: number) {
-        this.objectArrowX.setLength(this.arrowLength * valX);
-        this.objectScaleXYZ[0] = valX / 2;
-        this.scaleObject();
-    }
-
-    @Watch('scaleY')
-    private scaleObjectYAxis(valY: number) {
-        this.objectArrowY.setLength(this.arrowLength * valY);
-        this.objectScaleXYZ[1] = valY / 2;
-        this.scaleObject();
-    }
-
-    @Watch('scaleZ')
-    private scaleObjectZAxis(valZ: number) {
-        this.objectArrowZ.setLength(this.arrowLength * valZ);
-        this.objectScaleXYZ[2] = valZ / 2;
-        this.scaleObject();
     }
 }
 

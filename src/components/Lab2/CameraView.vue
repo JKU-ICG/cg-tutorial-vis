@@ -16,12 +16,14 @@ const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
 // scale as well?
 @Component({
     computed: {
-        ...mapGetters(['cameraX', 'cameraY', 'cameraZ', 'translateX', 'translateY', 'translateZ']),
+        ...mapGetters(['cameraX', 'cameraY', 'cameraZ', 'scaleX', 'scaleY', 'scaleZ',
+            'translateX', 'translateY', 'translateZ']),
     }})
 export class CameraView extends mixins(AbstractSpace) {
+    private isObjectCameraOrtho = false;
 
     private mounted() {
-        this.initCameraView(true);
+        this.initCameraView(this.isObjectCameraOrtho);
         this.animateCameraView();
     }
 
@@ -38,6 +40,24 @@ export class CameraView extends mixins(AbstractSpace) {
     @Watch('cameraZ')
     private changeFar(valZ: number) {
         this.changeCameraFar(valZ);
+    }
+
+    @Watch('scaleX')
+    private scaleObjectX(valX: number) {
+        this.scaleObjectXAxis(valX);
+        this.renderCameraView();
+    }
+
+    @Watch('scaleY')
+    private scaleObjectY(valY: number) {
+        this.scaleObjectYAxis(valY);
+        this.renderCameraView();
+    }
+
+    @Watch('scaleZ')
+    private scaleObjectZ(valZ: number) {
+        this.scaleObjectZAxis(valZ);
+        this.renderCameraView();
     }
 
     @Watch('translateX')
