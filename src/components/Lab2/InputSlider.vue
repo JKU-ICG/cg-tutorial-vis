@@ -10,7 +10,7 @@
         <vue-slider ref="slider" v-model='translateX' :min ="1" :max="10"></vue-slider>
         <vue-slider ref="slider" v-model='translateY' :min ="1" :max="10"></vue-slider>
         <vue-slider ref="slider" v-model='translateZ' :min ="1" :max="10"></vue-slider>
-        Scale Object
+        Translate Object
         </p>
         <p> 
         <vue-slider ref="slider" v-model='camX' :min ="1" :max="10"></vue-slider>

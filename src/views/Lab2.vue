@@ -2,9 +2,8 @@
   <div>
     <InputSlider/>
     <div class="grid">
-      <!-- <ModelSpace/> -->
-      <WorldSpace/>
-      <OrthoSpace/>
+      <ModelView/>
+      <CameraView/>
   </div>
   </div>
 </template>
@@ -19,16 +18,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ModelSpace from '@/components/Lab2/ModelSpace.vue';
-import OrthoSpace from '@/components/Lab2/OrthoSpace.vue';
-import WorldSpace from '@/components/Lab2/WorldSpace.vue';
+import ModelView from '@/components/Lab2/ModelView.vue';
+import CameraView from '@/components/Lab2/CameraView.vue';
 import InputSlider from '@/components/Lab2/InputSlider.vue';
 
 @Component({
   components: {
-    ModelSpace,
-    OrthoSpace,
-    WorldSpace,
+    ModelView,
+    CameraView,
     InputSlider,
   },
 })
