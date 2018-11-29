@@ -1,5 +1,7 @@
 <template>
-    <div></div>
+    <!-- <div v-on:mousedown = "mouseDown" v-on:mouseup = "mouseUp"> -->
+    <div>
+    </div>
 </template>
 
 <script lang = "ts">
@@ -21,10 +23,26 @@ const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
     }})
 export class CameraView extends mixins(AbstractSpace) {
     private isObjectCameraOrtho = false;
+    private mousePrev = { x: 0, y: 0 };
+    private y1 = 0;
 
     private mounted() {
         this.initCameraView(this.isObjectCameraOrtho);
         this.animateCameraView();
+    }
+
+    private mouseDown(event: MouseEvent) {
+        this.mousePrev.x = event.pageX; // clientX or pageX
+        this.mousePrev.y = event.pageY;
+    }
+    // correct -> camera totation it is and that too for x and y
+    // https://github.com/JKU-ICG/cg_lab_2018/blob/master/04_illumination/main.js
+
+    private mouseUp(event: MouseEvent) {
+        const diffX = (event.pageX - this.mousePrev.x);
+        const diffY = (event.pageY - this.mousePrev.y);
+        const diffZ = Math.sqrt((Math.pow(diffX, 2) + (Math.pow(diffY, 2))));
+        this.changeWorldCameraView(diffX, diffY, diffZ);
     }
 
     @Watch('cameraX')
