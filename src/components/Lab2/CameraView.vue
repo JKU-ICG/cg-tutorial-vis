@@ -1,6 +1,5 @@
 <template>
-    <!-- <div v-on:mousedown = "mouseDown" v-on:mouseup = "mouseUp"> -->
-    <div>
+    <div v-on:mousedown = "mouseDown" v-on:mouseup = "mouseUp" v-on:mousemove = "mouseMove">
     </div>
 </template>
 
@@ -12,6 +11,7 @@ import { mixins } from 'vue-class-component';
 import { createNamespacedHelpers } from 'vuex';
 import { AbstractSpace } from '@/components/Lab2/AbstractSpace.vue';
 import { watch } from 'fs';
+import { Vector2 } from 'three';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
 
@@ -23,27 +23,45 @@ const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
     }})
 export class CameraView extends mixins(AbstractSpace) {
     private isObjectCameraOrtho = false;
-    private mousePrev = { x: 0, y: 0 };
-    private y1 = 0;
+
+    // to be changed?
+    public screen: { left: number; top: number; width: number; height: number } = {
+        left: 0,
+        top: 0,
+        width: window.innerWidth,
+        height: window.innerHeight,
+    };
 
     private mounted() {
         this.initCameraView(this.isObjectCameraOrtho);
         this.animateCameraView();
     }
 
-    private mouseDown(event: MouseEvent) {
-        this.mousePrev.x = event.pageX; // clientX or pageX
-        this.mousePrev.y = event.pageY;
+    // also move to abstract space?
+    private getMouseOnCircle(pageX: number, pageY: number) {
+        const mouseOnCircle = new Vector2(
+            ((pageX - this.screen.width * 0.5 - this.screen.left) / (this.screen.width * 0.5)),
+            ((this.screen.height + 2 * (this.screen.top - pageY)) / this.screen.width),
+        );
+        return mouseOnCircle;
     }
-    // correct -> camera totation it is and that too for x and y
-    // https://github.com/JKU-ICG/cg_lab_2018/blob/master/04_illumination/main.js
+
+    private mouseDown(event: MouseEvent) {
+        this.mouseCurr.copy(this.getMouseOnCircle(event.pageX, event.pageY));
+        this.mousePrev.copy(this.mouseCurr);
+        this.updateRotateCamera();
+    }
 
     private mouseUp(event: MouseEvent) {
-        const diffX = (event.pageX - this.mousePrev.x);
-        const diffY = (event.pageY - this.mousePrev.y);
-        const diffZ = Math.sqrt((Math.pow(diffX, 2) + (Math.pow(diffY, 2))));
-        this.changeWorldCameraView(diffX, diffY, diffZ);
+
     }
+
+    private mouseMove(event: MouseEvent) {
+        this.updateRotateCamera();
+        this.mousePrev.copy(this.mouseCurr);
+        this.mouseCurr.copy(this.getMouseOnCircle(event.pageX, event.pageY));
+    }
+
 
     @Watch('cameraX')
     private translateCamera(valX: number) {

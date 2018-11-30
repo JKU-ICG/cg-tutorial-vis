@@ -3,6 +3,8 @@
 </template>
 
 <script lang = "ts">
+// see if the removal of else if condition in rotate camera stopped the rotation??
+// Go back to the frustum view version and implement trackball controls there??
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
@@ -12,7 +14,7 @@ import {
     WebGLRenderer, Group, BoxBufferGeometry,
     MeshBasicMaterial, EdgesGeometry, LineSegments,
     BoxHelper, SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color,
-    BufferAttribute, CameraHelper, Quaternion} from 'three';
+    BufferAttribute, CameraHelper, Quaternion, Vector2} from 'three';
 
 import { TrackballControls } from '../../lib/three-trackballcontrols';
 
@@ -53,14 +55,30 @@ export class AbstractSpace extends Vue {
     private cube = new Mesh(new BoxBufferGeometry(100, 100, 100), new MeshBasicMaterial({ color: 0xc0c0c0 }));
     // Rotate Camera Properties
     private eye = new Vector3();
-    private controls: any;
+    private eyeDirection = new Vector3();
+    private moveDirection = new Vector3();
+    private cameraUpDirection = new Vector3();
+    private cameraSidewaysDirection = new Vector3();
+    private lastPosition = new Vector3();
+    private axis = new Vector3();
+    private lastAxis = new Vector3();
+    private target = new Vector3();
+    private target0 = new Vector3();
+    private quaternion = new Quaternion();
+    private angle = 0;
+    private lastAngle = 0;
+    private dynamicDampingFactor: number = 0.2;
+    private staticMoving: boolean = false;
+    public mousePrev = new Vector2();
+    public mouseCurr = new Vector2();
 
     protected initCameraView(isObjectCameraOrthographic: boolean) {
         this.screenWidth = window.innerWidth; // because of renderering 2 views in one.
         this.worldCamera = new PerspectiveCamera(this.fov, this.aspectRatio, this.nearPlane, this.farPlane);
-        this.controls = new TrackballControls(this.worldCamera);
-        this.controls.rotateSpeed = 1.0;
-        this.controls.addEventListener('change', this.renderWorldCameraView());
+        this.staticMoving = false;
+        this.dynamicDampingFactor = 0.2;
+        this.target0 = this.target.clone();
+        this.updateRotateCamera();
         this.setObjectCameraProperties(isObjectCameraOrthographic);
         this.composeCameraScene();
         this.renderer = new WebGLRenderer({ antialias: true });
@@ -82,7 +100,6 @@ export class AbstractSpace extends Vue {
 
     protected animateCameraView() {
         requestAnimationFrame(this.animateCameraView);
-        this.controls.update();
         this.renderCameraView();
     }
 
@@ -168,33 +185,53 @@ export class AbstractSpace extends Vue {
         this.renderObjectCameraView(); // render the scene as viewed via the object camera
     }
 
-    // Change the z type to float from any
-    protected changeWorldCameraView(diffX: number, diffY: number, diffZ: any) {
-        const moveDirection = new Vector3();
-        moveDirection.set(diffX, diffY, 0);
-        let angle = moveDirection.length();
-        const upDirection = new Vector3();
-        const sidewaysDirection = new Vector3();
-        const eyeDirection = new Vector3();
-        console.log(angle);
-        if (angle) {
-            this.eye.copy(this.worldCamera.position);
-            eyeDirection.copy(this.eye).normalize();
-            upDirection.copy(this.worldCamera.up).normalize();
-            console.log(upDirection);
-            sidewaysDirection.crossVectors(upDirection, eyeDirection).normalize();
-            upDirection.setLength(diffY);
-            sidewaysDirection.setLength(diffX);
-            moveDirection.copy(upDirection.add(sidewaysDirection));
-            const axis = new Vector3();
-            axis.crossVectors(moveDirection, this.eye).normalize();
-            angle *= 1.0;
-            const quaternion = new Quaternion();
-            quaternion.setFromAxisAngle(axis, angle);
-            this.eye.applyQuaternion(quaternion);
-            this.worldCamera.up.applyQuaternion(quaternion);
+    protected updateRotateCamera() {
+        this.eye.subVectors(this.worldCamera.position, this.target);
+        this.rotateCamera();
+        this.worldCamera.position.addVectors(this.target, this.eye);
+        this.worldCamera.lookAt(this.target);
+        // if (this.lastPosition.distanceToSquared(this.object.position) > this.EPS) {
+        //     this.dispatchEvent.call(this.domElement, [this.changeEvent]);
+        //     this.lastPosition.copy(this.object.position);
+        // }
 
+    }
+    // Change the z type to float from any
+    protected rotateCamera() {
+        this.moveDirection.set(this.mouseCurr.x, this.mouseCurr.y, 0);
+        this.angle = this.moveDirection.length();
+
+        if (this.angle) {
+            this.eye.copy(this.worldCamera.position).sub(this.target);
+
+            this.eyeDirection.copy(this.eye).normalize();
+            this.cameraUpDirection.copy(this.worldCamera.up).normalize();
+            this.cameraSidewaysDirection.crossVectors(this.cameraUpDirection, this.eyeDirection).normalize();
+
+            this.cameraUpDirection.setLength(this.mouseCurr.y - this.mousePrev.y);
+            this.cameraSidewaysDirection.setLength(this.mouseCurr.x - this.mousePrev.x);
+
+            this.moveDirection.copy(this.cameraUpDirection.add(this.cameraSidewaysDirection));
+
+            this.axis.crossVectors(this.moveDirection, this.eye).normalize();
+
+            this.angle *= 1.0;
+            this.quaternion.setFromAxisAngle(this.axis, this.angle);
+
+            this.eye.applyQuaternion(this.quaternion);
+            this.worldCamera.up.applyQuaternion(this.quaternion);
+
+            this.lastAxis.copy(this.axis);
+            this.lastAngle = this.angle;
+
+        } else if (!this.staticMoving && this.lastAngle) {
+            this.lastAngle *= Math.sqrt(1.0 - this.dynamicDampingFactor);
+            this.eye.copy(this.worldCamera.position).sub(this.target);
+            this.quaternion.setFromAxisAngle(this.lastAxis, this.lastAngle);
+            this.eye.applyQuaternion(this.quaternion);
+            this.worldCamera.up.applyQuaternion(this.quaternion);
         }
+        this.mousePrev.copy(this.mouseCurr);
         this.renderWorldCameraView();
     }
 
