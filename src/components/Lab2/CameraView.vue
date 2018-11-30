@@ -21,11 +21,13 @@ const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
         ...mapGetters(['cameraX', 'cameraY', 'cameraZ', 'scaleX', 'scaleY', 'scaleZ',
             'translateX', 'translateY', 'translateZ']),
     }})
-export class CameraView extends mixins(AbstractSpace) {
+export class CameraView extends Vue {
+
     private isObjectCameraOrtho = false;
+    private cameraControls = new AbstractSpace(); // name to be changed
 
     // to be changed?
-    public screen: { left: number; top: number; width: number; height: number } = {
+    private screen: { left: number; top: number; width: number; height: number } = {
         left: 0,
         top: 0,
         width: window.innerWidth,
@@ -33,8 +35,8 @@ export class CameraView extends mixins(AbstractSpace) {
     };
 
     private mounted() {
-        this.initCameraView(this.isObjectCameraOrtho);
-        this.animateCameraView();
+        this.cameraControls.initCameraView(this.$el);
+        this.cameraControls.renderScene();
     }
 
     // also move to abstract space?
@@ -47,9 +49,10 @@ export class CameraView extends mixins(AbstractSpace) {
     }
 
     private mouseDown(event: MouseEvent) {
-        this.mouseCurr.copy(this.getMouseOnCircle(event.pageX, event.pageY));
-        this.mousePrev.copy(this.mouseCurr);
-        this.updateRotateCamera();
+        this.cameraControls.mouseCurr.copy(this.getMouseOnCircle(event.pageX, event.pageY));
+        this.cameraControls.mousePrev.copy(this.cameraControls.mouseCurr);
+        this.cameraControls.updateMainCamera();
+        this.cameraControls.renderScene();
     }
 
     private mouseUp(event: MouseEvent) {
@@ -57,61 +60,66 @@ export class CameraView extends mixins(AbstractSpace) {
     }
 
     private mouseMove(event: MouseEvent) {
-        this.updateRotateCamera();
-        this.mousePrev.copy(this.mouseCurr);
-        this.mouseCurr.copy(this.getMouseOnCircle(event.pageX, event.pageY));
+        this.cameraControls.mousePrev.copy(this.cameraControls.mouseCurr);
+        this.cameraControls.mouseCurr.copy(this.getMouseOnCircle(event.pageX, event.pageY));
+        this.cameraControls.updateMainCamera();
+        this.cameraControls.renderScene();
     }
 
 
     @Watch('cameraX')
     private translateCamera(valX: number) {
-        this.translateCameraX(valX);
+        this.cameraControls.translateCameraX(valX);
+        this.cameraControls.renderMainCameraView(); // renderScene??
+
     }
 
     @Watch('cameraY')
     private changeFOV(valY: number) {
-        this.changeCameraFOV(valY);
+        this.cameraControls.changeCameraFOV(valY);
+        this.cameraControls.renderMainCameraView();
     }
 
     @Watch('cameraZ')
     private changeFar(valZ: number) {
-        this.changeCameraFar(valZ);
+        this.cameraControls.changeCameraFar(valZ);
+        this.cameraControls.renderMainCameraView();
     }
 
     @Watch('scaleX')
     private scaleObjectX(valX: number) {
-        this.scaleObjectXAxis(valX);
-        this.renderCameraView();
+        this.cameraControls.scaleObjectXAxis(valX);
+        this.cameraControls.renderScene();
     }
 
     @Watch('scaleY')
     private scaleObjectY(valY: number) {
-        this.scaleObjectYAxis(valY);
-        this.renderCameraView();
+        this.cameraControls.scaleObjectYAxis(valY);
+        this.cameraControls.renderScene();
     }
 
     @Watch('scaleZ')
     private scaleObjectZ(valZ: number) {
-        this.scaleObjectZAxis(valZ);
-        this.renderCameraView();
+        this.cameraControls.scaleObjectZAxis(valZ);
+        this.cameraControls.renderScene();
     }
 
     @Watch('translateX')
     private moveObjectX(valX: number) {
-        this.translateObjX(valX);
-        this.renderCameraView();
+        this.cameraControls.translateObjX(valX);
+        this.cameraControls.renderScene();
     }
 
     @Watch('translateY')
     private moveObjectY(valY: number) {
-        this.translateObjY(valY);
-        this.renderCameraView();
+        this.cameraControls.translateObjY(valY);
+        this.cameraControls.renderScene();
     }
 
     @Watch('translateZ')
     private moveObjectZ(valZ: number) {
-        this.translateObjZ(valZ);
-        this.renderCameraView();
+        this.cameraControls.translateObjZ(valZ);
+        this.cameraControls.renderScene();
     }
 }
 

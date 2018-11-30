@@ -5,7 +5,7 @@
 <script lang = "ts">
 import * as Three from 'three';
 import Vue from 'vue';
-import { Component, Watch } from 'vue-property-decorator';
+import { Component, Watch, Model } from 'vue-property-decorator';
 import { mixins } from 'vue-class-component';
 import { createNamespacedHelpers } from 'vuex';
 import { AbstractSpace } from '@/components/Lab2/AbstractSpace.vue';
@@ -16,47 +16,53 @@ const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
     computed: {
         ...mapGetters(['scaleX', 'scaleY', 'scaleZ', 'translateX', 'translateY', 'translateZ']),
     }})
-export class ModelView extends mixins(AbstractSpace) {
+export class ModelView extends Vue {
+    private modelControls: any;
+
+    constructor() {
+        super();
+        this.modelControls = new AbstractSpace(); // definitely needs to change
+    }
 
     private mounted() {
-        this.initModelView();
-        this.animateModelView();
+        this.modelControls.initModelView();
+        this.modelControls.renderWorldCameraView();
     }
 
     @Watch('scaleX')
     private scaleObjectX(valX: number) {
-        this.scaleObjectXAxis(valX);
-        this.renderWorldCameraView();
+        this.modelControls.scaleObjectXAxis(valX);
+        this.modelControls.renderWorldCameraView();
     }
 
     @Watch('scaleY')
     private scaleObjectY(valY: number) {
-        this.scaleObjectYAxis(valY);
-        this.renderWorldCameraView();
+        this.modelControls.scaleObjectYAxis(valY);
+        this.modelControls.renderWorldCameraView();
     }
 
     @Watch('scaleZ')
     private scaleObjectZ(valZ: number) {
-        this.scaleObjectZAxis(valZ);
-        this.renderWorldCameraView();
+        this.modelControls.scaleObjectZAxis(valZ);
+        this.modelControls.renderWorldCameraView();
     }
 
     @Watch('translateX')
     private moveObjectX(valX: number) {
-        this.translateObjX(valX);
-        this.renderWorldCameraView();
+        this.modelControls.translateObjX(valX);
+        this.modelControls.renderWorldCameraView();
     }
 
     @Watch('translateY')
     private moveObjectY(valY: number) {
-        this.translateObjY(valY);
-        this.renderWorldCameraView();
+        this.modelControls.translateObjY(valY);
+        this.modelControls.renderWorldCameraView();
     }
 
     @Watch('translateZ')
     private moveObjectZ(valZ: number) {
-        this.translateObjZ(valZ);
-        this.renderWorldCameraView();
+        this.modelControls.translateObjZ(valZ);
+        this.modelControls.renderWorldCameraView();
     }
 }
 

@@ -2,7 +2,7 @@
   <div>
     <InputSlider/>
     <div class="grid">
-      <ModelView/>
+      <!-- <ModelView/> -->
       <CameraView/>
   </div>
   </div>
@@ -24,7 +24,7 @@ import InputSlider from '@/components/Lab2/InputSlider.vue';
 
 @Component({
   components: {
-    ModelView,
+    // ModelView,
     CameraView,
     InputSlider,
   },
