@@ -12,9 +12,6 @@ import {
     BoxHelper, SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color,
     BufferAttribute, CameraHelper, Quaternion, Vector2, SceneUtils, MeshDepthMaterial} from 'three';
 
-// Scene comprises of a world and an object
-// TO DOs: Object translation should also contain negative values.
-// Object axis to be fixed.
 export class CameraControls extends Vue {
 
     // Mouse cursors

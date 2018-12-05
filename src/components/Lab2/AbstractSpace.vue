@@ -55,7 +55,7 @@ export class AbstractSpace extends mixins(OrbitControls) {
         this.scene = new Scene();
         this.scaleObject = { x: 1, y: 1, z: 1 };
 
-        this.mainCamera = this.getMainCamera();
+        this.mainCamera = this.getMainCamera(); // since the position is set, it is affecting, overall view, so think about it? May be update once in update?
         this.objectCamera = this.getObjectCamera();
         this.objectCameraHelper = this.getObjectCameraHelper();
 
@@ -67,6 +67,8 @@ export class AbstractSpace extends mixins(OrbitControls) {
 
     public initCameraView(el: HTMLElement) {
         this.screenWidth = window.innerWidth; // because of renderering 2 views in one.
+        this.saveState();
+        this.reset();
         this.updateAndRotate();
         this.composeCameraScene();
         this.renderer = new WebGLRenderer({ antialias: true });
@@ -136,8 +138,6 @@ export class AbstractSpace extends mixins(OrbitControls) {
     }
 
     private renderMainCameraView() {
-        this.mainCamera.position.z = 500;
-
         this.objectCameraHelper.visible = true;
 
         this.renderer.setViewport(0, 0, this.screenWidth / 2, this.screenHeight);

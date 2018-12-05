@@ -12,9 +12,6 @@ import {
     BoxHelper, SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color,
     BufferAttribute, CameraHelper, Quaternion, Vector2, SceneUtils, MeshDepthMaterial, Spherical} from 'three';
 
-// Scene comprises of a world and an object
-// TO DOs: Object translation should also contain negative values.
-// Object axis to be fixed.
 export class OrbitControls extends Vue {
 
     // Screen Dimensions
@@ -67,11 +64,6 @@ export class OrbitControls extends Vue {
     private minDistance: number;
     private maxDistance: number;
 
-    // Events
-    private changeEvent: { type: string };
-    private startEvent: { type: string };
-    private endEvent: { type: string };
-
     constructor() {
         super();
 
@@ -92,6 +84,8 @@ export class OrbitControls extends Vue {
         this.mainPerspectiveCamera = new PerspectiveCamera(this.fov, this.screenAspectRatio,
             this.nearPlane, this.farPlane);
 
+        this.mainPerspectiveCamera.position.set(1000, 50, 1500);
+
         this.isObjectCameraOrthographic = false; // isObjectCameraOrthographic;
 
         this.nearPlaneObj = 100;
@@ -107,8 +101,8 @@ export class OrbitControls extends Vue {
 
         this.objectAnyCameraHelper = new CameraHelper(this.objectAnyCamera);
 
-        this.target = new Vector3(); // OC
-        this.target0 = this.target.clone(); //OC
+        this.target = new Vector3();
+        this.target0 = this.target.clone();
 
         // Orbit Controls
         this.minPolarAngle = 0;
@@ -131,10 +125,6 @@ export class OrbitControls extends Vue {
 
         this.minDistance = 1000;
         this.maxDistance = 5000;
-
-        this.changeEvent = { type: 'change' };
-        this.startEvent = { type: 'start' };
-        this.endEvent = { type: 'end' };
     }
 
     public animateOnMouseDownEvent(event: MouseEvent) {
@@ -148,15 +138,8 @@ export class OrbitControls extends Vue {
         this.rotateUp(2 * Math.PI * this.rotateDelta.y / element.clientHeight);
 
         this.rotateStart.copy(this.rotateEnd);
+
         this.updateAndRotate();
-    }
-
-    public rotateLeft(angle: number) {
-        this.sphericalDelta.theta -= angle;
-    }
-
-    public rotateUp(angle: number) {
-        this.sphericalDelta.phi -= angle;
     }
 
     // Slider operation on Cameras
@@ -183,17 +166,23 @@ export class OrbitControls extends Vue {
 
     protected updateAndRotate() {
         const position = this.mainPerspectiveCamera.position;
+
         const offset = new Vector3();
         offset.copy(position).sub(this.target);
+
         const quaternion = new Quaternion().setFromUnitVectors(this.mainPerspectiveCamera.up, new Vector3(0, 1, 0));
-        offset.applyQuaternion(quaternion);
         const quaternionInverse = quaternion.clone().inverse();
+
+        offset.applyQuaternion(quaternion);
+
         this.spherical.setFromVector3(offset);
+
         this.spherical.theta += this.sphericalDelta.theta;
         this.spherical.phi += this.sphericalDelta.phi;
 
         this.spherical.theta = Math.max(this.minAzimuthAngle, Math.min(this.maxAzimuthAngle, this.spherical.theta));
         this.spherical.phi = Math.max(this.minPolarAngle, Math.min(this.maxPolarAngle, this.spherical.phi));
+
         this.spherical.makeSafe();
 
         this.spherical.radius *= this.scale;
@@ -204,11 +193,13 @@ export class OrbitControls extends Vue {
         offset.applyQuaternion(quaternionInverse);
 
         position.copy(this.target).add(offset);
+
         this.mainPerspectiveCamera.lookAt(this.target);
 
         this.sphericalDelta.set(0, 0, 0);
 
         this.scale = 1;
+        this.mainPerspectiveCamera.updateProjectionMatrix();
     }
 
     protected getMainCamera() {
@@ -221,6 +212,26 @@ export class OrbitControls extends Vue {
 
     protected getObjectCameraHelper() {
         return this.objectAnyCameraHelper;
+    }
+
+    protected reset() {
+        this.target.copy(this.target0);
+        this.mainPerspectiveCamera.position.copy(this.position0);
+        this.mainPerspectiveCamera.updateProjectionMatrix();
+        this.updateAndRotate();
+    }
+
+    protected saveState() {
+        this.target0.copy(this.target);
+        this.position0.copy(this.mainPerspectiveCamera.position);
+    }
+
+    private rotateLeft(angle: number) {
+        this.sphericalDelta.theta -= angle;
+    }
+
+    private rotateUp(angle: number) {
+        this.sphericalDelta.phi -= angle;
     }
 
 }

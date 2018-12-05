@@ -1,5 +1,5 @@
 <template>
-    <div v-on:mousedown = "mouseDown" v-on:mouseup = "mouseUp" v-on:mousemove = "mouseMove">
+    <div v-on:mousedown = "mouseDown" v-on:mouseup = "mouseUp">
     </div>
 </template>
 
@@ -30,12 +30,15 @@ export class CameraView extends Vue {
     }
 
     private mouseDown(event: MouseEvent) {
+        document.addEventListener('mousemove', this.mouseMove, false);
+        document.addEventListener('mouseup', this.mouseUp, false);
         this.abstractSpace.animateOnMouseDownEvent(event);
         this.abstractSpace.renderEntireCameraView();
     }
 
     private mouseUp(event: MouseEvent) {
-        // Stop animation on mouse move when mouse is lifted
+        document.removeEventListener('mousemove', this.mouseMove, false);
+        document.removeEventListener('mouseup', this.mouseUp, false);
     }
 
     private mouseMove(event: MouseEvent) {
