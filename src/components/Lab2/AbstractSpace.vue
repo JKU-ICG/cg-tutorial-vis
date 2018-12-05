@@ -67,7 +67,7 @@ export class AbstractSpace extends mixins(CameraControls) {
             new MeshBasicMaterial({ color: 0xc0c0c0 }));
     }
 
-    public initCameraView(el: any) {
+    public initCameraView(el: HTMLElement) {
         this.screenWidth = window.innerWidth; // because of renderering 2 views in one.
         this.updateMainCameraWithRotation();
         this.composeCameraScene();
@@ -78,15 +78,15 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.renderer.autoClear = false;
     }
 
-    public initModelView(el: any) {
+    public initModelView(el: HTMLElement) {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.screenWidth, this.screenHeight);
         this.composeModelScene();
-        this.renderMainCameraView();
+        this.renderModelView();
         el.appendChild(this.renderer.domElement);
     }
 
-    public renderScene() {
+    public renderEntireCameraView() {
         this.objectCamera.updateProjectionMatrix(); // perform update operations
         this.objectCameraHelper.update();
         this.objectCameraHelper.visible = true;
@@ -96,21 +96,9 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.renderObjectCameraView(); // render the scene as viewed via the object camera
     }
 
-    public renderMainCameraView() {
+    public renderModelView() {
         this.mainCamera.position.z = 500;
-
-        if (!isNullOrUndefined(this.objectCameraHelper)) {
-            this.objectCameraHelper.visible = true;
-            this.renderer.setViewport(0, 0, this.screenWidth / 2, this.screenHeight);
-        }
-
         this.renderer.render(this.scene, this.mainCamera);
-    }
-
-    public renderObjectCameraView() {
-        this.objectCameraHelper.visible = false;
-        this.renderer.setViewport(this.screenWidth / 2, 0, this.screenWidth / 2, this.screenHeight);
-        this.renderer.render(this.scene, this.objectCamera);
     }
 
     // Interactions
@@ -143,6 +131,23 @@ export class AbstractSpace extends mixins(CameraControls) {
 
     public translateObjZ(valZ: number) {
         this.cube.position.z = valZ * 100;
+    }
+
+    private renderMainCameraView() {
+        this.mainCamera.position.z = 500;
+
+        if (!isNullOrUndefined(this.objectCameraHelper)) {
+            this.objectCameraHelper.visible = true;
+            this.renderer.setViewport(0, 0, this.screenWidth / 2, this.screenHeight);
+        }
+
+        this.renderer.render(this.scene, this.mainCamera);
+    }
+
+    private renderObjectCameraView() {
+        this.objectCameraHelper.visible = false;
+        this.renderer.setViewport(this.screenWidth / 2, 0, this.screenWidth / 2, this.screenHeight);
+        this.renderer.render(this.scene, this.objectCamera);
     }
 
     private composeCameraScene() {

@@ -13,7 +13,6 @@ import { watch } from 'fs';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
 
-// scale as well?
 @Component({
     computed: {
         ...mapGetters(['cameraX', 'cameraY', 'cameraZ', 'scaleX', 'scaleY', 'scaleZ',
@@ -27,76 +26,76 @@ export class CameraView extends Vue {
 
     private mounted() {
         this.abstractSpace.initCameraView(this.$el);
-        this.abstractSpace.renderScene();
+        this.abstractSpace.renderEntireCameraView();
     }
 
     private mouseDown(event: MouseEvent) {
         this.abstractSpace.animateOnMouseDownEvent(event);
-        this.abstractSpace.renderScene();
+        this.abstractSpace.renderEntireCameraView();
     }
 
     private mouseUp(event: MouseEvent) {
-
+        // Stop animation on mouse move when mouse is lifted
     }
 
     private mouseMove(event: MouseEvent) {
         this.abstractSpace.animateOnMouseMoveEvent(event);
-        this.abstractSpace.renderScene();
+        this.abstractSpace.renderEntireCameraView();
     }
 
     @Watch('cameraX')
     private translateCamera(valX: number) {
         this.abstractSpace.translateCameraX(valX);
-        this.abstractSpace.renderMainCameraView(); // renderScene??
+        this.abstractSpace.renderEntireCameraView(); // renderEntireCameraView??
 
     }
 
     @Watch('cameraY')
     private changeFOV(valY: number) {
         this.abstractSpace.changeCameraFOV(valY);
-        this.abstractSpace.renderMainCameraView();
+        this.abstractSpace.renderEntireCameraView();
     }
 
     @Watch('cameraZ')
     private changeFar(valZ: number) {
         this.abstractSpace.changeCameraFar(valZ);
-        this.abstractSpace.renderMainCameraView();
+        this.abstractSpace.renderEntireCameraView();
     }
 
     @Watch('scaleX')
     private scaleObjectX(valX: number) {
         this.abstractSpace.scaleObjectXAxis(valX);
-        this.abstractSpace.renderScene();
+        this.abstractSpace.renderEntireCameraView();
     }
 
     @Watch('scaleY')
     private scaleObjectY(valY: number) {
         this.abstractSpace.scaleObjectYAxis(valY);
-        this.abstractSpace.renderScene();
+        this.abstractSpace.renderEntireCameraView();
     }
 
     @Watch('scaleZ')
     private scaleObjectZ(valZ: number) {
         this.abstractSpace.scaleObjectZAxis(valZ);
-        this.abstractSpace.renderScene();
+        this.abstractSpace.renderEntireCameraView();
     }
 
     @Watch('translateX')
     private moveObjectX(valX: number) {
         this.abstractSpace.translateObjX(valX);
-        this.abstractSpace.renderScene();
+        this.abstractSpace.renderEntireCameraView();
     }
 
     @Watch('translateY')
     private moveObjectY(valY: number) {
         this.abstractSpace.translateObjY(valY);
-        this.abstractSpace.renderScene();
+        this.abstractSpace.renderEntireCameraView();
     }
 
     @Watch('translateZ')
     private moveObjectZ(valZ: number) {
         this.abstractSpace.translateObjZ(valZ);
-        this.abstractSpace.renderScene();
+        this.abstractSpace.renderEntireCameraView();
     }
 }
 
