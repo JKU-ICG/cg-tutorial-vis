@@ -39,8 +39,7 @@ export class CameraView extends Vue {
     }
 
     private mouseMove(event: MouseEvent) {
-        this.abstractSpace.animateOnMouseMoveEvent(event);
-        this.abstractSpace.renderEntireCameraView();
+        this.abstractSpace.onMouseMove(event);
     }
 
     @Watch('cameraX')

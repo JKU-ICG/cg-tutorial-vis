@@ -6,7 +6,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import mixins from 'vue-class-component';
-import CameraControls from '@/components/Lab2/CameraControls.vue';
+import OrbitControls from '@/components/Lab2/OrbitControls.vue';
 import {
     PerspectiveCamera, OrthographicCamera, Scene,
     WebGLRenderer, Group, BoxBufferGeometry,
@@ -18,7 +18,7 @@ import {
 // Scene comprises of a world and an object
 // TO DOs: Object translation should also contain negative values.
 // Object axis to be fixed.
-export class AbstractSpace extends mixins(CameraControls) {
+export class AbstractSpace extends mixins(OrbitControls) {
 
     // Renderer Properties
     private renderer: WebGLRenderer;
@@ -67,7 +67,7 @@ export class AbstractSpace extends mixins(CameraControls) {
 
     public initCameraView(el: HTMLElement) {
         this.screenWidth = window.innerWidth; // because of renderering 2 views in one.
-        this.updateMainCameraWithRotation();
+        this.updateAndRotate();
         this.composeCameraScene();
         this.renderer = new WebGLRenderer({ antialias: true });
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -76,6 +76,10 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.renderer.autoClear = false;
     }
 
+    public onMouseMove(event: MouseEvent) {
+        this.animateOnMouseMoveEvent(event, this.renderer.domElement);
+        this.renderEntireCameraView();
+    }
     public initModelView(el: HTMLElement) {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.screenWidth, this.screenHeight);
