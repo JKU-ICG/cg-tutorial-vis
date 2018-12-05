@@ -3,12 +3,8 @@
 </template>
 
 <script lang = "ts">
-// see if the removal of else if condition in rotate camera stopped the rotation??
-// Go back to the frustum view version and implement trackball controls there??
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { Watch } from 'vue-property-decorator';
-import { isNullOrUndefined } from 'util';
 import {
     PerspectiveCamera, OrthographicCamera, Scene,
     WebGLRenderer, Group, BoxBufferGeometry,

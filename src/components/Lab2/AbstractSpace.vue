@@ -5,9 +5,7 @@
 <script lang = "ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { Watch } from 'vue-property-decorator';
 import mixins from 'vue-class-component';
-import { isNullOrUndefined } from 'util';
 import CameraControls from '@/components/Lab2/CameraControls.vue';
 import {
     PerspectiveCamera, OrthographicCamera, Scene,
@@ -136,11 +134,9 @@ export class AbstractSpace extends mixins(CameraControls) {
     private renderMainCameraView() {
         this.mainCamera.position.z = 500;
 
-        if (!isNullOrUndefined(this.objectCameraHelper)) {
-            this.objectCameraHelper.visible = true;
-            this.renderer.setViewport(0, 0, this.screenWidth / 2, this.screenHeight);
-        }
+        this.objectCameraHelper.visible = true;
 
+        this.renderer.setViewport(0, 0, this.screenWidth / 2, this.screenHeight);
         this.renderer.render(this.scene, this.mainCamera);
     }
 
