@@ -22,8 +22,11 @@ import {
 export class CameraControls extends Vue {
 
     // Mouse cursors
-    public mousePrev: Vector2;
-    public mouseCurr: Vector2;
+    private mousePrev: Vector2;
+    private mouseCurr: Vector2;
+
+    // Screen Dimensions
+    private screen: { left: number; top: number; width: number; height: number };
 
     // Camera Properties
     private mainPerspectiveCamera: PerspectiveCamera;
@@ -61,7 +64,7 @@ export class CameraControls extends Vue {
     private dynamicDampingFactor: number;
     private staticMoving: boolean;
 
-    private aspectRatioTBD: number;
+    private screenAspectRatio: number;
 
     constructor() {
         super();
@@ -71,18 +74,26 @@ export class CameraControls extends Vue {
         this.fov = 50;
         this.frustumSize = 50;
 
-        this.aspectRatioTBD = 2 * window.innerWidth / window.innerHeight; // definitely needs to change
+        this.screen = {
+            left: 0,
+            top: 0,
+            width: window.innerWidth,
+            height: window.innerHeight,
+        };
 
-        this.mainPerspectiveCamera = new PerspectiveCamera(this.fov, this.aspectRatioTBD, this.nearPlane, this.farPlane);
+        this.screenAspectRatio = 2 * this.screen.width / this.screen.height;
+
+        this.mainPerspectiveCamera = new PerspectiveCamera(this.fov, this.screenAspectRatio,
+            this.nearPlane, this.farPlane);
 
         this.isObjectCameraOrthographic = false; // isObjectCameraOrthographic;
 
         this.nearPlaneObj = 100;
         this.farPlaneObj = 200;
 
-        this.objectAnyCamera = new PerspectiveCamera(this.fov, this.aspectRatioTBD, this.nearPlaneObj, this.farPlaneObj);
+        this.objectAnyCamera = new PerspectiveCamera(this.fov, this.screenAspectRatio,
+            this.nearPlaneObj, this.farPlaneObj);
         if (this.isObjectCameraOrthographic) {
-            // this.isObjectCameraOrthographic = isObjectCameraOrthographic;
             this.objectAnyCamera = new OrthographicCamera(- this.frustumSize, this.frustumSize,
                 this.frustumSize, - this.frustumSize, this.nearPlaneObj, this.farPlaneObj);
         }
@@ -116,23 +127,16 @@ export class CameraControls extends Vue {
         this.mouseCurr = new Vector2();
     }
 
-    public fetchMainCamera(): PerspectiveCamera {
-        return this.mainPerspectiveCamera;
+    public animateOnMouseDownEvent(event: MouseEvent) {
+        this.mouseCurr.copy(this.getMouseOnCircle(event.pageX, event.pageY));
+        this.mousePrev.copy(this.mouseCurr);
+        this.updateMainCameraWithRotation();
     }
 
-    public getObjectCamera(): any {
-        return this.objectAnyCamera;
-    }
-
-    public getObjectCameraHelper(): CameraHelper {
-        return this.objectAnyCameraHelper;
-    }
-
-    public updateMainCamera() {
-        this.eye.subVectors(this.mainPerspectiveCamera.position, this.target);
-        this.rotateMainCamera();
-        this.mainPerspectiveCamera.position.addVectors(this.target, this.eye);
-        this.mainPerspectiveCamera.lookAt(this.target);
+    public animateOnMouseMoveEvent(event: MouseEvent) {
+        this.mousePrev.copy(this.mouseCurr);
+        this.mouseCurr.copy(this.getMouseOnCircle(event.pageX, event.pageY));
+        this.updateMainCameraWithRotation();
     }
 
     // Slider operation on Cameras
@@ -155,6 +159,33 @@ export class CameraControls extends Vue {
     public changeCameraFar(valZ: number) {
         this.farPlaneObj = valZ * 100;
         this.objectAnyCamera.far = this.farPlaneObj;
+    }
+
+    protected updateMainCameraWithRotation() {
+        this.eye.subVectors(this.mainPerspectiveCamera.position, this.target);
+        this.rotateMainCamera();
+        this.mainPerspectiveCamera.position.addVectors(this.target, this.eye);
+        this.mainPerspectiveCamera.lookAt(this.target);
+    }
+
+    protected getMainCamera() {
+        return this.mainPerspectiveCamera;
+    }
+
+    protected getObjectCamera() {
+        return this.objectAnyCamera;
+    }
+
+    protected getObjectCameraHelper() {
+        return this.objectAnyCameraHelper;
+    }
+
+    private getMouseOnCircle(pageX: number, pageY: number) {
+        const mouseOnCircle = new Vector2(
+            ((pageX - this.screen.width * 0.5 - this.screen.left) / (this.screen.width * 0.5)),
+            ((this.screen.height + 2 * (this.screen.top - pageY)) / this.screen.width),
+        );
+        return mouseOnCircle;
     }
 
     // imported from Three.Trackballcontrols

@@ -3,14 +3,12 @@
 </template>
 
 <script lang = "ts">
-// see if the removal of else if condition in rotate camera stopped the rotation??
-// Go back to the frustum view version and implement trackball controls there??
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
-import { mixins } from 'vue-class-component';
+import mixins from 'vue-class-component';
 import { isNullOrUndefined } from 'util';
-import { CameraControls } from '@/components/Lab2/CameraControls.vue';
+import CameraControls from '@/components/Lab2/CameraControls.vue';
 import {
     PerspectiveCamera, OrthographicCamera, Scene,
     WebGLRenderer, Group, BoxBufferGeometry,
@@ -48,7 +46,6 @@ export class AbstractSpace extends mixins(CameraControls) {
     private objectCamera: any;
     private objectCameraHelper: CameraHelper;
 
-    // is not a function!!!
     constructor() {
         super();
 
@@ -60,17 +57,19 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.scene = new Scene();
         this.scaleObject = { x: 1, y: 1, z: 1 };
 
-        this.mainCamera = this.fetchMainCamera();
+        this.mainCamera = this.getMainCamera();
         this.objectCamera = this.getObjectCamera();
         this.objectCameraHelper = this.getObjectCameraHelper();
 
         this.arrowLength = 100;
-        this.cube = new Mesh(new BoxBufferGeometry(100, 100, 100), new MeshBasicMaterial({ color: 0xc0c0c0 }));
+
+        this.cube = new Mesh(new BoxBufferGeometry(100, 100, 100),
+            new MeshBasicMaterial({ color: 0xc0c0c0 }));
     }
 
     public initCameraView(el: any) {
         this.screenWidth = window.innerWidth; // because of renderering 2 views in one.
-        this.updateMainCamera();
+        this.updateMainCameraWithRotation();
         this.composeCameraScene();
         this.renderer = new WebGLRenderer({ antialias: true });
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -97,7 +96,6 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.renderObjectCameraView(); // render the scene as viewed via the object camera
     }
 
-    // access specifiers to be changed?
     public renderMainCameraView() {
         this.mainCamera.position.z = 500;
 
