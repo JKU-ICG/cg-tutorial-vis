@@ -85,8 +85,8 @@ export class OrbitControls extends Vue {
 
         this.isObjectCameraOrthographic = false; // isObjectCameraOrthographic;
 
-        this.nearPlaneObj = 100;
-        this.farPlaneObj = 200;
+        this.nearPlaneObj = 30;
+        this.farPlaneObj = 100;
 
         this.objectAnyCamera = new PerspectiveCamera(this.fov, this.screenAspectRatio,
             this.nearPlaneObj, this.farPlaneObj);
