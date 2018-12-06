@@ -11,7 +11,7 @@ import {
     PerspectiveCamera, Scene, WebGLRenderer, BoxBufferGeometry,
     MeshBasicMaterial, EdgesGeometry, LineSegments, BoxHelper,
     SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color,
-    CameraHelper, Vector2, MeshPhongMaterial, DirectionalLight} from 'three';
+    CameraHelper, Vector2, MeshPhongMaterial, DirectionalLight, log} from 'three';
 
 
 // Scene comprises of a world and an object
@@ -40,8 +40,10 @@ export class AbstractSpace extends mixins(CameraControls) {
 
     // Cameras
     private mainCamera: PerspectiveCamera;
-    private objectCamera: any;
-    private objectCameraHelper: CameraHelper;
+    private objectActiveCamera: any;
+    private objectActiveCameraHelper: CameraHelper;
+    private objectPerspectiveCameraHelper: CameraHelper;
+    private objectOrthographicCameraHelper: CameraHelper;
 
     // Light
     private directionalLight: DirectionalLight;
@@ -58,8 +60,13 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.scaleObject = { x: 1, y: 1, z: 1 };
 
         this.mainCamera = this.getMainCamera();
-        this.objectCamera = this.getObjectCamera();
-        this.objectCameraHelper = this.getObjectCameraHelper();
+
+        this.objectActiveCamera = this.getObjectCamera();
+
+        this.objectPerspectiveCameraHelper = this.getObjectPerspectiveCameraHelper();
+        this.objectOrthographicCameraHelper = this.getObjectOrthographicCameraHelper();
+
+        this.objectActiveCameraHelper = this.objectPerspectiveCameraHelper;
 
         this.arrowLength = 300;
 
@@ -79,7 +86,6 @@ export class AbstractSpace extends mixins(CameraControls) {
     public initCameraView(el: HTMLElement) {
         this.screenWidth = window.innerWidth; // because of renderering 2 views in one.
 
-        this.saveState();
         this.reset();
         this.updateAndRotate();
         this.composeCameraScene();
@@ -97,16 +103,28 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.renderer.setSize(this.screenWidth, this.screenHeight);
 
         this.composeModelScene();
-        this.renderModelView();
 
         el.appendChild(this.renderer.domElement);
     }
 
-    public renderEntireCameraView() {
-        this.objectCamera.updateProjectionMatrix(); // perform update operations
-        this.objectCameraHelper.update();
-        this.objectCameraHelper.visible = true;
-        this.objectCamera.lookAt(this.cube.position);
+    public animateCameraView() {
+        requestAnimationFrame(this.animateCameraView.bind(this));
+
+        // Camera Helpers have been added individually to the scene, therefore must be updated accordingly.
+        if (this.objectActiveCameraHelper === this.objectPerspectiveCameraHelper) {
+
+            this.objectPerspectiveCameraHelper.visible = true;
+            this.objectOrthographicCameraHelper.visible = false;
+            this.objectPerspectiveCameraHelper.update();
+        } else {
+
+            this.objectPerspectiveCameraHelper.visible = false;
+            this.objectOrthographicCameraHelper.visible = true;
+            this.objectOrthographicCameraHelper.update();
+        }
+
+        this.objectActiveCamera.updateProjectionMatrix();
+        this.objectActiveCamera.lookAt(this.cube.position);
 
         this.renderer.clear();
 
@@ -114,14 +132,22 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.renderObjectCameraView(); // render the scene as viewed via the object camera
     }
 
-    public renderModelView() {
+    public animateModelView() {
+        requestAnimationFrame(this.animateModelView.bind(this));
+
         this.mainCamera.position.set(100, 0, 500);
         this.renderer.render(this.scene, this.mainCamera);
     }
 
-    public onMouseMove(event: MouseEvent) {
+    public onSwitchCamera(camera: string) {
+        const activeComponents = this.getActiveCamera(camera);
+
+        this.objectActiveCamera = activeComponents.camera;
+        this.objectActiveCameraHelper = activeComponents.helper;
+    }
+
+    public encapsulateDomElementAndAnimate(event: MouseEvent) {
         this.animateOnMouseMoveEvent(event, this.renderer.domElement);
-        this.renderEntireCameraView();
     }
 
     // Interactions
@@ -157,33 +183,35 @@ export class AbstractSpace extends mixins(CameraControls) {
     }
 
     private renderMainCameraView() {
-        this.objectCameraHelper.visible = true;
+        this.objectActiveCameraHelper.visible = true;
 
         this.renderer.setViewport(0, 0, this.screenWidth / 2, this.screenHeight);
         this.renderer.render(this.scene, this.mainCamera);
     }
 
     private renderObjectCameraView() {
-        this.objectCameraHelper.visible = false;
+        this.objectActiveCameraHelper.visible = false;
+
         this.renderer.setViewport(this.screenWidth / 2, 0, this.screenWidth / 2, this.screenHeight);
-        this.renderer.render(this.scene, this.objectCamera);
+        this.renderer.render(this.scene, this.objectActiveCamera);
     }
 
     private composeCameraScene() {
         this.miniWorld();
+        this.addCube();
+        this.addObjectAxis();
 
         this.mainCamera.add(this.directionalLight);
 
         this.scene.add(this.mainCamera); // camera needs to be added to the scene as it has a child object
-        this.scene.add(this.objectCameraHelper);
-        this.scene.add(this.objectCamera);
-
-        this.addCube(); // this.objectCamera.add(this.cube);
-        this.addObjectAxis(); // not working?
+        this.scene.add(this.objectPerspectiveCameraHelper);
+        this.scene.add(this.objectOrthographicCameraHelper);
+        this.scene.add(this.getCameraGroup());
     }
-    private composeModelScene() {
 
+    private composeModelScene() {
         this.scene.add(this.directionalLight);
+
         this.miniWorld();
         this.addVertices();
         this.addCube();

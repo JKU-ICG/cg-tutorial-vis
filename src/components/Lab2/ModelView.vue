@@ -21,43 +21,37 @@ export class ModelView extends Vue {
 
     private mounted() {
         this.abstractSpace.initModelView(this.$el);
-        this.abstractSpace.renderModelView();
+        this.abstractSpace.animateModelView();
     }
 
     @Watch('scaleX')
     private scaleObjectX(valX: number) {
         this.abstractSpace.scaleObjectXAxis(valX);
-        this.abstractSpace.renderModelView();
     }
 
     @Watch('scaleY')
     private scaleObjectY(valY: number) {
         this.abstractSpace.scaleObjectYAxis(valY);
-        this.abstractSpace.renderModelView();
     }
 
     @Watch('scaleZ')
     private scaleObjectZ(valZ: number) {
         this.abstractSpace.scaleObjectZAxis(valZ);
-        this.abstractSpace.renderModelView();
     }
 
     @Watch('translateX')
     private moveObjectX(valX: number) {
         this.abstractSpace.translateObjX(valX);
-        this.abstractSpace.renderModelView();
     }
 
     @Watch('translateY')
     private moveObjectY(valY: number) {
         this.abstractSpace.translateObjY(valY);
-        this.abstractSpace.renderModelView();
     }
 
     @Watch('translateZ')
     private moveObjectZ(valZ: number) {
         this.abstractSpace.translateObjZ(valZ);
-        this.abstractSpace.renderModelView();
     }
 }
 

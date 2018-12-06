@@ -7,7 +7,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import {
     PerspectiveCamera, OrthographicCamera, Vector3,
-    CameraHelper, Quaternion, Vector2, Spherical, Camera} from 'three';
+    CameraHelper, Quaternion, Vector2, Spherical, Group} from 'three';
 
 export class CameraControls extends Vue {
 
@@ -17,8 +17,16 @@ export class CameraControls extends Vue {
     // Camera Properties
     private mainPerspectiveCamera: PerspectiveCamera;
 
-    private objectAnyCamera: any;
-    private objectAnyCameraHelper: CameraHelper;
+    private objPerspectiveCamera: PerspectiveCamera;
+    private objPerspectiveCameraHelper: CameraHelper;
+
+    private objOrthoCamera: OrthographicCamera;
+    private objOrthoCameraHelper: CameraHelper;
+
+    private activeCamera: any;
+    private activeCameraHelper: CameraHelper;
+
+    private cameraGroup: Group;
 
     // Perspective Camera Properties
     private nearPlane: number;
@@ -88,15 +96,22 @@ export class CameraControls extends Vue {
         this.nearPlaneObj = 30;
         this.farPlaneObj = 100;
 
-        this.objectAnyCamera = new PerspectiveCamera(this.fov, this.screenAspectRatio,
+        this.objPerspectiveCamera = new PerspectiveCamera(this.fov, this.screenAspectRatio,
             this.nearPlaneObj, this.farPlaneObj);
 
-        if (this.isObjectCameraOrthographic) {
-            this.objectAnyCamera = new OrthographicCamera(- this.frustumSize, this.frustumSize,
-                this.frustumSize, - this.frustumSize, this.nearPlaneObj, this.farPlaneObj);
-        }
+        this.objPerspectiveCameraHelper = new CameraHelper(this.objPerspectiveCamera);
 
-        this.objectAnyCameraHelper = new CameraHelper(this.objectAnyCamera);
+        this.objOrthoCamera = new OrthographicCamera(- this.frustumSize, this.frustumSize,
+            this.frustumSize, - this.frustumSize, this.nearPlaneObj, this.farPlaneObj);
+
+        this.objOrthoCameraHelper = new CameraHelper(this.objOrthoCamera);
+
+        this.cameraGroup = new Group();
+        this.cameraGroup.add(this.objPerspectiveCamera);
+        this.cameraGroup.add(this.objOrthoCamera);
+
+        this.activeCamera = this.objPerspectiveCamera;
+        this.activeCameraHelper = this.objPerspectiveCameraHelper;
 
         this.target = new Vector3();
         this.target0 = this.target.clone();
@@ -141,26 +156,29 @@ export class CameraControls extends Vue {
 
     // Slider operation on Cameras
     public translateCameraX(valX: number) {
-        this.objectAnyCamera.position.x = - valX * 10;
+        this.activeCamera.position.x = - valX * 10;
     }
 
     public changeCameraFOV(valY: number) {
-        if (this.isObjectCameraOrthographic) {
-            this.frustumSize = valY * 10;
-            this.objectAnyCamera.left = - this.frustumSize;
-            this.objectAnyCamera.right = this.frustumSize;
-            this.objectAnyCamera.top = - this.frustumSize;
-            this.objectAnyCamera.bottom = this.frustumSize;
+        if (this.activeCamera === this.objOrthoCamera) {
+
+            this.frustumSize = valY * 50;
+            this.activeCamera.left = - this.frustumSize;
+            this.activeCamera.right = this.frustumSize;
+            this.activeCamera.top = - this.frustumSize;
+            this.activeCamera.bottom = this.frustumSize;
+        } else {
+            this.fov = valY * 10;
+            this.activeCamera.fov = this.fov;
         }
-        this.fov = valY * 10;
-        this.objectAnyCamera.fov = this.fov;
     }
 
     public changeCameraFar(valZ: number) {
         this.farPlaneObj = valZ * 100;
-        this.objectAnyCamera.far = this.farPlaneObj;
+        this.activeCamera.far = this.farPlaneObj;
     }
 
+    // ported from Orbitcontrols in three.js
     protected updateAndRotate() {
         const position = this.mainPerspectiveCamera.position;
 
@@ -198,16 +216,41 @@ export class CameraControls extends Vue {
         this.scale = 1;
     }
 
+    protected getActiveCamera(camera: string) {
+        if (camera === 'Perspective') {
+
+            this.activeCamera = this.objPerspectiveCamera;
+            this.activeCameraHelper = this.objPerspectiveCameraHelper;
+        } else {
+
+            this.activeCamera = this.objOrthoCamera;
+            this.activeCameraHelper = this.objOrthoCameraHelper;
+        }
+
+        return {
+            camera: this.activeCamera,
+            helper: this.activeCameraHelper,
+        };
+    }
+
     protected getMainCamera() {
         return this.mainPerspectiveCamera;
     }
 
     protected getObjectCamera() {
-        return this.objectAnyCamera;
+        return this.activeCamera;
     }
 
-    protected getObjectCameraHelper() {
-        return this.objectAnyCameraHelper;
+    protected getObjectPerspectiveCameraHelper() {
+        return this.objPerspectiveCameraHelper;
+    }
+
+    protected getObjectOrthographicCameraHelper() {
+        return this.objOrthoCameraHelper;
+    }
+
+    protected getCameraGroup(): Group {
+        return this.cameraGroup;
     }
 
     protected reset() {
@@ -215,11 +258,6 @@ export class CameraControls extends Vue {
         this.mainPerspectiveCamera.position.copy(this.position0);
         this.mainPerspectiveCamera.updateProjectionMatrix();
         this.updateAndRotate();
-    }
-
-    protected saveState() {
-        this.target0.copy(this.target);
-        this.position0.copy(this.mainPerspectiveCamera.position);
     }
 
     private rotateLeft(angle: number) {
