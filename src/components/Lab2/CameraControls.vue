@@ -7,9 +7,9 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import {
     PerspectiveCamera, OrthographicCamera, Vector3,
-    CameraHelper, Quaternion, Vector2, Spherical} from 'three';
+    CameraHelper, Quaternion, Vector2, Spherical, Camera} from 'three';
 
-export class OrbitControls extends Vue {
+export class CameraControls extends Vue {
 
     // Screen Dimensions
     private screen: { left: number; top: number; width: number; height: number };
@@ -232,5 +232,5 @@ export class OrbitControls extends Vue {
 
 }
 
-export default OrbitControls;
+export default CameraControls;
 </script>

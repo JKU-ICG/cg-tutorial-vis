@@ -6,7 +6,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import mixins from 'vue-class-component';
-import OrbitControls from '@/components/Lab2/OrbitControls.vue';
+import CameraControls from '@/components/Lab2/CameraControls.vue';
 import {
     PerspectiveCamera, Scene, WebGLRenderer, BoxBufferGeometry,
     MeshBasicMaterial, EdgesGeometry, LineSegments, BoxHelper,
@@ -17,7 +17,7 @@ import {
 // Scene comprises of a world and an object
 // TO DOs: Object translation should also contain negative values.
 // Object axis to be fixed.
-export class AbstractSpace extends mixins(OrbitControls) {
+export class AbstractSpace extends mixins(CameraControls) {
 
     // Renderer Properties
     private renderer: WebGLRenderer;
@@ -70,7 +70,7 @@ export class AbstractSpace extends mixins(OrbitControls) {
             shininess: 4,
         });
 
-        this.cube = new Mesh(new BoxBufferGeometry(300, 200, 200), material);
+        this.cube = new Mesh(new BoxBufferGeometry(200, 200, 200), material);
 
         this.directionalLight = new DirectionalLight(0xffffff, 1);
         this.directionalLight.position.set(1, 1, 1).normalize();
@@ -210,14 +210,14 @@ export class AbstractSpace extends mixins(OrbitControls) {
 
     private addVertices() {
         const vertices = new Float32Array([
-            50.0, 50.0, 50.0,
-            50.0, 50.0, -50.0,
-            50.0, -50.0, 50.0,
-            50.0, -50.0, -50.0,
-            -50.0, 50.0, -50.0,
-            -50.0, 50.0, 50.0,
-            -50.0, -50.0, 50.0,
-            -50.0, -50.0, -50.0,
+            100.0, 100.0, 100.0,
+            100.0, 100.0, -100.0,
+            100.0, -100.0, 100.0,
+            100.0, -100.0, -100.0,
+            -100.0, 100.0, -100.0,
+            -100.0, 100.0, 100.0,
+            -100.0, -100.0, 100.0,
+            -100.0, -100.0, -100.0,
         ]);
 
         let i = 0;
