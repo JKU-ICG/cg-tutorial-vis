@@ -8,11 +8,10 @@ import Component from 'vue-class-component';
 import mixins from 'vue-class-component';
 import OrbitControls from '@/components/Lab2/OrbitControls.vue';
 import {
-    PerspectiveCamera, OrthographicCamera, Scene,
-    WebGLRenderer, Group, BoxBufferGeometry,
-    MeshBasicMaterial, EdgesGeometry, LineSegments,
-    BoxHelper, SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color,
-    BufferAttribute, CameraHelper, Quaternion, Vector2, SceneUtils, MeshDepthMaterial} from 'three';
+    PerspectiveCamera, Scene, WebGLRenderer, BoxBufferGeometry,
+    MeshBasicMaterial, EdgesGeometry, LineSegments, BoxHelper,
+    SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color,
+    CameraHelper, Vector2, MeshPhongMaterial, Matrix3, PointLight, DirectionalLight} from 'three';
 
 
 // Scene comprises of a world and an object
@@ -44,6 +43,10 @@ export class AbstractSpace extends mixins(OrbitControls) {
     private objectCamera: any;
     private objectCameraHelper: CameraHelper;
 
+    // Light
+    private particleLight: Mesh;
+    private directionalLight: DirectionalLight;
+
     constructor() {
         super();
 
@@ -61,8 +64,20 @@ export class AbstractSpace extends mixins(OrbitControls) {
 
         this.arrowLength = 100;
 
-        this.cube = new Mesh(new BoxBufferGeometry(100, 100, 100),
-            new MeshBasicMaterial({ color: 0xc0c0c0 }));
+        const material = new MeshPhongMaterial({
+            color: 0x2194ce,
+            emissive: new Color().setHSL(0.1, 0.5, 0.5),
+            reflectivity: 0.2,
+            shininess: 4,
+        });
+
+        this.cube = new Mesh(new BoxBufferGeometry(100, 100, 100), material);
+
+        this.particleLight = new Mesh(new SphereBufferGeometry(4, 8, 8),
+            new MeshBasicMaterial({ color: 0xffffff }));
+
+        this.directionalLight = new DirectionalLight(0xffffff, 1);
+        this.directionalLight.position.set(1, 1, 1).normalize();
     }
 
     public initCameraView(el: HTMLElement) {
@@ -104,8 +119,17 @@ export class AbstractSpace extends mixins(OrbitControls) {
     }
 
     public renderModelView() {
-        this.mainCamera.position.set(0, 0, 500);
+        const timer = Date.now() * 0.00025;
+
+        this.particleLight.position.x = Math.sin(timer * 7) * 100;
+        this.particleLight.position.y = Math.cos(timer * 5) * 400;
+        this.particleLight.position.z = Math.cos(timer * 3) * 300;
+
+        this.mainCamera.position.z = 500;
+
         this.renderer.render(this.scene, this.mainCamera);
+
+        requestAnimationFrame(this.renderModelView.bind(this));
     }
 
     public onMouseMove(event: MouseEvent) {
@@ -168,6 +192,13 @@ export class AbstractSpace extends mixins(OrbitControls) {
         this.addObjectAxis(); // not working?
     }
     private composeModelScene() {
+        this.scene.add(this.particleLight);
+        this.scene.add(this.directionalLight);
+
+        const pointLight = new PointLight(0xffffff, 2, 800);
+
+        this.particleLight.add(pointLight);
+
         this.miniWorld();
         this.addVertices();
         this.addCube();

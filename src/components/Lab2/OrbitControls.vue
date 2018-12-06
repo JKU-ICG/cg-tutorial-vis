@@ -6,11 +6,8 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import {
-    PerspectiveCamera, OrthographicCamera, Scene,
-    WebGLRenderer, Group, BoxBufferGeometry,
-    MeshBasicMaterial, EdgesGeometry, LineSegments,
-    BoxHelper, SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color,
-    BufferAttribute, CameraHelper, Quaternion, Vector2, SceneUtils, MeshDepthMaterial, Spherical} from 'three';
+    PerspectiveCamera, OrthographicCamera, Vector3,
+    CameraHelper, Quaternion, Vector2, Spherical} from 'three';
 
 export class OrbitControls extends Vue {
 
