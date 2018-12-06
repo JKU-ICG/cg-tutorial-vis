@@ -84,7 +84,7 @@ export class OrbitControls extends Vue {
         this.mainPerspectiveCamera = new PerspectiveCamera(this.fov, this.screenAspectRatio,
             this.nearPlane, this.farPlane);
 
-        this.mainPerspectiveCamera.position.set(1000, 50, 1500);
+        this.mainPerspectiveCamera.position.z = 500;
 
         this.isObjectCameraOrthographic = false; // isObjectCameraOrthographic;
 
@@ -123,7 +123,7 @@ export class OrbitControls extends Vue {
         this.rotateEnd = new Vector2();
         this.rotateDelta = new Vector2();
 
-        this.minDistance = 1000;
+        this.minDistance = 100;
         this.maxDistance = 5000;
     }
 
@@ -199,7 +199,6 @@ export class OrbitControls extends Vue {
         this.sphericalDelta.set(0, 0, 0);
 
         this.scale = 1;
-        this.mainPerspectiveCamera.updateProjectionMatrix();
     }
 
     protected getMainCamera() {

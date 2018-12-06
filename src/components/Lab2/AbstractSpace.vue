@@ -55,7 +55,7 @@ export class AbstractSpace extends mixins(OrbitControls) {
         this.scene = new Scene();
         this.scaleObject = { x: 1, y: 1, z: 1 };
 
-        this.mainCamera = this.getMainCamera(); // since the position is set, it is affecting, overall view, so think about it? May be update once in update?
+        this.mainCamera = this.getMainCamera();
         this.objectCamera = this.getObjectCamera();
         this.objectCameraHelper = this.getObjectCameraHelper();
 
@@ -67,26 +67,27 @@ export class AbstractSpace extends mixins(OrbitControls) {
 
     public initCameraView(el: HTMLElement) {
         this.screenWidth = window.innerWidth; // because of renderering 2 views in one.
+
         this.saveState();
         this.reset();
         this.updateAndRotate();
         this.composeCameraScene();
+
         this.renderer = new WebGLRenderer({ antialias: true });
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.screenWidth, this.screenHeight);
+
         el.appendChild(this.renderer.domElement);
         this.renderer.autoClear = false;
     }
 
-    public onMouseMove(event: MouseEvent) {
-        this.animateOnMouseMoveEvent(event, this.renderer.domElement);
-        this.renderEntireCameraView();
-    }
     public initModelView(el: HTMLElement) {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.screenWidth, this.screenHeight);
+
         this.composeModelScene();
         this.renderModelView();
+
         el.appendChild(this.renderer.domElement);
     }
 
@@ -95,14 +96,21 @@ export class AbstractSpace extends mixins(OrbitControls) {
         this.objectCameraHelper.update();
         this.objectCameraHelper.visible = true;
         this.objectCamera.lookAt(this.cube.position);
+
         this.renderer.clear();
+
         this.renderMainCameraView(); // render the scene overall as viewed via the world camera
         this.renderObjectCameraView(); // render the scene as viewed via the object camera
     }
 
     public renderModelView() {
-        this.mainCamera.position.z = 500;
+        this.mainCamera.position.set(0, 0, 500);
         this.renderer.render(this.scene, this.mainCamera);
+    }
+
+    public onMouseMove(event: MouseEvent) {
+        this.animateOnMouseMoveEvent(event, this.renderer.domElement);
+        this.renderEntireCameraView();
     }
 
     // Interactions
@@ -152,8 +160,10 @@ export class AbstractSpace extends mixins(OrbitControls) {
 
     private composeCameraScene() {
         this.miniWorld();
+
         this.scene.add(this.objectCameraHelper);
         this.scene.add(this.objectCamera);
+
         this.addCube(); // this.objectCamera.add(this.cube);
         this.addObjectAxis(); // not working?
     }
@@ -169,10 +179,12 @@ export class AbstractSpace extends mixins(OrbitControls) {
         const material = new MeshBasicMaterial();
         const edges = new EdgesGeometry(boxGeometry);
         const line = new LineSegments(edges);
+
         line.material.depthTest = false;
         line.material.opacity = 0.25;
         line.material.transparent = true;
         line.position.x = 0;
+
         this.scene.add(new BoxHelper(line));
     }
 
@@ -197,10 +209,13 @@ export class AbstractSpace extends mixins(OrbitControls) {
             const sphere = new SphereBufferGeometry(3, 10, 10);
             const material = new MeshBasicMaterial({ color: 0xff0000 });
             const drawSphere = new Mesh(sphere, material);
+
             drawSphere.position.x = vertices[i];
             drawSphere.position.y = vertices[i + 1];
             drawSphere.position.z = vertices[i + 2];
+
             i = i + 3;
+
             this.scene.add(drawSphere);
         }
     }
@@ -210,9 +225,11 @@ export class AbstractSpace extends mixins(OrbitControls) {
         const dirX = new Vector3(this.cube.position.x + 1, 0, 0);
         const dirY = new Vector3(0, this.cube.position.y + 1, 0);
         const dirZ = new Vector3(0, 0, this.cube.position.z + 1);
+
         this.objectArrowX = new ArrowHelper(dirX, origin, this.arrowLength, 0xff0000);
         this.objectArrowY = new ArrowHelper(dirY, origin, this.arrowLength, 0x00ff00);
         this.objectArrowZ = new ArrowHelper(dirZ, origin, this.arrowLength, 0x0000cc);
+
         this.scene.add(this.objectArrowX);
         this.scene.add(this.objectArrowY);
         this.scene.add(this.objectArrowZ);
