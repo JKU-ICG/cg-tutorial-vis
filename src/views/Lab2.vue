@@ -2,7 +2,7 @@
   <div>
     <InputSlider/>
     <div class="grid">
-      <ModelView/>
+      <div> ModelView<ModelView/> </div>
       <CameraView/>
   </div>
   </div>

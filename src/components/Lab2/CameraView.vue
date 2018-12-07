@@ -1,7 +1,7 @@
 <template>
     <div v-on:mousedown = "mouseDown" v-on:mouseup = "mouseUp">
         <button v-on:click="switchCameras('Perspective')">Perspective</button>
-        <button v-on:click="switchCameras('OrthoGraphic')">OrthoGraphic</button>
+        <button v-on:click="switchCameras('Orthographic')">OrthoGraphic</button>
     </div>
 </template>
 

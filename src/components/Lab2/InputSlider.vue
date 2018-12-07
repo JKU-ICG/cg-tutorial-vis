@@ -1,10 +1,11 @@
 <template>
     <div id = "sliderbar" style="height: 50px; width: 100px">
         <p>
+        Scale Object
         <vue-slider ref="slider" v-model='scaleX' :min ="1" :max="10"></vue-slider>
         <vue-slider ref="slider" v-model='scaleY' :min ="1" :max="10"></vue-slider>
         <vue-slider ref="slider" v-model='scaleZ' :min ="1" :max="10"></vue-slider>
-        Scale Object
+        
         </p>
         <p>
         <vue-slider ref="slider" v-model='translateX' :min ="1" :max="10"></vue-slider>
