@@ -9,20 +9,26 @@ import { createNamespacedHelpers } from 'vuex';
 import { AbstractSpace } from '@/components/Lab2/AbstractSpace.vue';
 import { watch } from 'fs';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
+const { mapGetters, mapActions } = createNamespacedHelpers('settings');
 
 @Component({
     computed: {
         ...mapGetters(['cameraX', 'cameraY', 'cameraZ', 'scaleX', 'scaleY', 'scaleZ',
-            'translateX', 'translateY', 'translateZ']),
+            'translateX', 'translateY', 'translateZ', 'isCameraPerspective']),
     }})
-export class ObjectCamera extends Vue {
+export class OutputView extends Vue {
     private abstractSpace = new AbstractSpace();
 
     private mounted() {
 
         this.abstractSpace.initObjectCameraView(this.$el);
         this.abstractSpace.animateObjectCameraView();
+    }
+
+    @Watch('isCameraPerspective')
+    private switchCamera(isCameraPersp: boolean) {
+
+        this.abstractSpace.onSwitchCamera(isCameraPersp);
     }
 
     @Watch('cameraX')
@@ -81,5 +87,5 @@ export class ObjectCamera extends Vue {
 
 }
 
-export default ObjectCamera;
+export default OutputView;
 </script>

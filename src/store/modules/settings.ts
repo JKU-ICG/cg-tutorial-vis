@@ -9,6 +9,7 @@ const inputState = {
     cameraX: 1,
     cameraY: 1,
     cameraZ: 1,
+    isCameraPerspective: true,
 };
 
 // getters
@@ -22,6 +23,7 @@ const inputGetters = {
     cameraX: (state: any) => state.cameraX,
     cameraY: (state: any) => state.cameraY,
     cameraZ: (state: any) => state.cameraZ,
+    isCameraPerspective: (state: any) => state.isCameraPerspective,
 };
 
 // actions
@@ -53,6 +55,9 @@ const inputActions = {
     setCameraZ: ({ commit }: any, newCameraZ: number) => {
         commit('setCameraZ', newCameraZ);
     },
+    setIsCameraPerspective: ({ commit }: any, value: boolean) => {
+        commit('setIsCameraPerspective', value);
+    },
 };
 
 // mutations
@@ -83,6 +88,9 @@ const inputMutations = {
     },
     setCameraZ(state: any, newCameraZ: number) {
         state.cameraZ = newCameraZ;
+    },
+    setIsCameraPerspective(state: any, value: boolean) {
+        state.isCameraPerspective = value;
     },
 };
 

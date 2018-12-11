@@ -137,20 +137,15 @@ export class AbstractSpace extends mixins(CameraControls) {
             this.objectPerspectiveCameraHelper.visible = false;
             this.renderer.render(this.scene, this.objectPerspectiveCamera);
         } else {
-            console.log('orthographic');
+
             this.objectOrthographicCameraHelper.visible = false;
             this.renderer.render(this.scene, this.objectOrthographicCamera);
         }
     }
 
-    public onSwitchCamera(camera: string) {
+    public onSwitchCamera(isCameraPers: boolean) {
 
-        this.isObjectCameraPespective = false;
-
-        if (camera.localeCompare('Perspective') === 0) {
-
-            this.isObjectCameraPespective = true;
-        }
+        this.isObjectCameraPespective = isCameraPers;
 
         this.setIsObjCameraPerspective(this.isObjectCameraPespective);
     }

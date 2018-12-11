@@ -1,7 +1,5 @@
 <template>
     <div v-on:mousedown = "mouseDown" v-on:mouseup = "mouseUp">
-        <button v-on:click="switchCameras('Perspective')">Perspective</button>
-        <button v-on:click="switchCameras('Orthographic')">OrthoGraphic</button>
     </div>
 </template>
 
@@ -12,12 +10,12 @@ import { createNamespacedHelpers } from 'vuex';
 import { AbstractSpace } from '@/components/Lab2/AbstractSpace.vue';
 import { watch } from 'fs';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
+const { mapGetters, mapActions } = createNamespacedHelpers('settings');
 
 @Component({
     computed: {
         ...mapGetters(['cameraX', 'cameraY', 'cameraZ', 'scaleX', 'scaleY', 'scaleZ',
-            'translateX', 'translateY', 'translateZ']),
+            'translateX', 'translateY', 'translateZ', 'isCameraPerspective']),
     }})
 export class CameraView extends Vue {
 
@@ -29,11 +27,6 @@ export class CameraView extends Vue {
 
         this.abstractSpace.initMainCameraView(this.$el);
         this.abstractSpace.animateMainCameraView();
-    }
-
-    private switchCameras(camera: string) {
-
-        this.abstractSpace.onSwitchCamera(camera);
     }
 
     private mouseDown(event: MouseEvent) {
@@ -53,6 +46,12 @@ export class CameraView extends Vue {
     private mouseMove(event: MouseEvent) {
 
         this.abstractSpace.animateOnMouseMoveEvent(event);
+    }
+
+    @Watch('isCameraPerspective')
+    private switchCamera(isCameraPersp: boolean) {
+
+        this.abstractSpace.onSwitchCamera(isCameraPersp);
     }
 
     @Watch('cameraX')

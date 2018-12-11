@@ -9,7 +9,7 @@ import { Component, Watch, Model } from 'vue-property-decorator';
 import { createNamespacedHelpers } from 'vuex';
 import { AbstractSpace } from '@/components/Lab2/AbstractSpace.vue';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
+const { mapGetters, mapActions } = createNamespacedHelpers('settings');
 
 @Component({
     computed: {

@@ -1,9 +1,9 @@
 <template>
   <div>
-    <InputSlider/>
+    <Settings/>
     <div class="grid">
       <div> CameraView <CameraView/> </div>
-      <div> ObjectCamera <ObjectCamera/> </div>
+      <div> OutputView <OutputView/> </div>
       <div> ModelView <ModelView/> </div>
   </div>
   </div>
@@ -20,15 +20,15 @@
 import { Component, Vue } from 'vue-property-decorator';
 import ModelView from '@/components/Lab2/ModelView.vue';
 import CameraView from '@/components/Lab2/CameraView.vue';
-import ObjectCamera from '@/components/Lab2/ObjectCamera.vue';
-import InputSlider from '@/components/Lab2/InputSlider.vue';
+import OutputView from '@/components/Lab2/OutputView.vue';
+import Settings from '@/components/Lab2/Settings.vue';
 
 @Component({
     components: {
         ModelView,
         CameraView,
-        ObjectCamera,
-        InputSlider,
+        OutputView,
+        Settings,
     },
 })
 export default class Lab2 extends Vue { }
