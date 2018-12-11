@@ -15,8 +15,7 @@ import {
 
 
 // Scene comprises of a world and an object
-// TO DOs: Object translation should also contain negative values.
-// Object axis to be fixed.
+
 export class AbstractSpace extends mixins(CameraControls) {
 
     // Renderer Properties
@@ -53,6 +52,7 @@ export class AbstractSpace extends mixins(CameraControls) {
     private directionalLight: DirectionalLight;
 
     constructor() {
+
         super();
 
         this.renderer = new WebGLRenderer();
@@ -88,37 +88,147 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.directionalLight.position.set(1, 1, 1).normalize();
     }
 
-    public initCameraView(el: HTMLElement) {
-        this.screenWidth = window.innerWidth; // because of renderering 2 views in one.
-
-        this.reset();
-        this.updateAndRotate();
-        this.composeCameraScene();
-
-        this.renderer = new WebGLRenderer({ antialias: true });
-        this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.setSize(this.screenWidth, this.screenHeight);
-
-        el.appendChild(this.renderer.domElement);
-        this.renderer.autoClear = false;
-    }
-
     public initModelView(el: HTMLElement) {
-        this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.setSize(this.screenWidth, this.screenHeight);
 
         this.composeModelScene();
+        this.initRenderer(el);
+    }
+
+    public initMainCameraView(el: HTMLElement) {
+
+        this.resetMainCamera();
+        this.updateAndRotateMainCamera();
+        this.composeCameraScene();
+        this.initRenderer(el);
+    }
+
+    public initObjectCameraView(el: HTMLElement) {
+
+        this.composeCameraScene();  // comment this?
+        this.initRenderer(el);
+    }
+
+    public animateModelView() {
+
+        requestAnimationFrame(this.animateModelView.bind(this));
+
+        this.mainCamera.position.set(100, 0, 700);
+
+        this.renderer.render(this.scene, this.mainCamera);
+    }
+
+    public animateMainCameraView() {
+
+        requestAnimationFrame(this.animateMainCameraView.bind(this));
+
+        this.updateObjectCamera();
+
+        this.renderer.render(this.scene, this.mainCamera);
+    }
+
+    public animateObjectCameraView() {
+
+        requestAnimationFrame(this.animateObjectCameraView.bind(this));
+
+        this.updateObjectCamera();
+
+        if (this.isObjectCameraPespective) {
+
+            this.objectPerspectiveCameraHelper.visible = false;
+            this.renderer.render(this.scene, this.objectPerspectiveCamera);
+        } else {
+            console.log('orthographic');
+            this.objectOrthographicCameraHelper.visible = false;
+            this.renderer.render(this.scene, this.objectOrthographicCamera);
+        }
+    }
+
+    public onSwitchCamera(camera: string) {
+
+        this.isObjectCameraPespective = false;
+
+        if (camera.localeCompare('Perspective') === 0) {
+
+            this.isObjectCameraPespective = true;
+        }
+
+        this.setIsObjCameraPerspective(this.isObjectCameraPespective);
+    }
+
+    public animateOnMouseDownEvent(event: MouseEvent) {
+
+        this.startRotationOnMouseDown(event);
+    }
+
+    public animateOnMouseMoveEvent(event: MouseEvent) {
+
+        this.rotateOnMouseMove(event, this.renderer.domElement);
+    }
+
+    // Interactions
+    public scaleObjectXAxis(valX: number) {
+
+        this.objectArrowX.setLength(this.arrowLength * valX);
+        this.scaleObject.x = valX / 2;
+        this.cube.scale.set(this.scaleObject.x, this.scaleObject.y, this.scaleObject.z);
+    }
+
+    public scaleObjectYAxis(valY: number) {
+
+        this.objectArrowY.setLength(this.arrowLength * valY);
+        this.scaleObject.y = valY / 2;
+        this.cube.scale.set(this.scaleObject.x, this.scaleObject.y, this.scaleObject.z);
+    }
+
+    public scaleObjectZAxis(valZ: number) {
+
+        this.objectArrowZ.setLength(this.arrowLength * valZ);
+        this.scaleObject.z = valZ / 2;
+        this.cube.scale.set(this.scaleObject.x, this.scaleObject.y, this.scaleObject.z);
+    }
+
+    public translateObjX(valX: number) {
+
+        this.cube.position.x = valX * 100;
+    }
+
+    public translateObjY(valY: number) {
+
+        this.cube.position.y = valY * 100;
+    }
+
+    public translateObjZ(valZ: number) {
+
+        this.cube.position.z = valZ * 100;
+    }
+
+    public changeCameraX(valX: number) {
+
+        this.translateCameraX(valX);
+    }
+
+    public changeCameraY(valY: number) {
+
+        this.changeCameraFOV(valY);
+    }
+
+    public changeCameraZ(valZ: number) {
+
+        this.changeCameraFar(valZ);
+    }
+
+    private initRenderer(el: HTMLElement) {
+
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setSize(this.screenWidth, this.screenHeight);
 
         el.appendChild(this.renderer.domElement);
     }
 
-    public animateCameraView() {
+    private updateObjectCamera() {
 
-        // this.cube.rotation.x += 0.01;
-        this.cube.rotation.y += 0.01;
-        this.cube.rotation.z += 0.01;
-
-        requestAnimationFrame(this.animateCameraView.bind(this));
+        // this.cube.rotation.y += 0.01;
+        // this.cube.rotation.z += 0.01;
 
         // Camera Helpers have been added individually to the scene, therefore must be updated accordingly.
         if (this.isObjectCameraPespective) {
@@ -142,94 +252,10 @@ export class AbstractSpace extends mixins(CameraControls) {
         }
 
         this.renderer.clear();
-
-        this.renderMainCameraView(); // render the scene overall as viewed via the world camera
-
-        this.objectPerspectiveCameraHelper.visible = false;
-        this.objectOrthographicCameraHelper.visible = false;
-
-        this.renderObjectCameraView(); // render the scene as viewed via the object camera
-    }
-
-    public animateModelView() {
-        requestAnimationFrame(this.animateModelView.bind(this));
-
-        this.mainCamera.position.set(100, 0, 500);
-        this.renderer.render(this.scene, this.mainCamera);
-    }
-
-    public onSwitchCamera(camera: string) {
-        this.isObjectCameraPespective = false;
-
-        if (camera.localeCompare('Perspective') === 0) {
-
-            this.isObjectCameraPespective = true;
-        }
-
-        this.setIsObjCameraPerspective(this.isObjectCameraPespective);
-    }
-
-    public encapsulateDomElementAndAnimate(event: MouseEvent) {
-        this.animateOnMouseMoveEvent(event, this.renderer.domElement);
-    }
-
-    // Interactions
-    public scaleObjectXAxis(valX: number) {
-        this.objectArrowX.setLength(this.arrowLength * valX);
-        this.scaleObject.x = valX / 2;
-        this.cube.scale.set(this.scaleObject.x, this.scaleObject.y, this.scaleObject.z);
-    }
-
-    public scaleObjectYAxis(valY: number) {
-        this.objectArrowY.setLength(this.arrowLength * valY);
-        this.scaleObject.y = valY / 2;
-        this.cube.scale.set(this.scaleObject.x, this.scaleObject.y, this.scaleObject.z);
-    }
-
-    public scaleObjectZAxis(valZ: number) {
-        this.objectArrowZ.setLength(this.arrowLength * valZ);
-        this.scaleObject.z = valZ / 2;
-        this.cube.scale.set(this.scaleObject.x, this.scaleObject.y, this.scaleObject.z);
-    }
-
-    // also the arrows and vertices should change their position
-    public translateObjX(valX: number) {
-        this.cube.position.x = valX * 100;
-    }
-
-    public translateObjY(valY: number) {
-        this.cube.position.y = valY * 100;
-    }
-
-    public translateObjZ(valZ: number) {
-        this.cube.position.z = valZ * 100;
-    }
-
-    // will anyway change in the future because of view separation
-    private renderMainCameraView() {
-        this.renderer.setViewport(0, 0, this.screenWidth / 2, this.screenHeight);
-        this.renderer.render(this.scene, this.mainCamera);
-    }
-
-
-    // translateZ : 2, CameraY: 4, CameraZ: 2, value acting weird. check the issue
-    private renderObjectCameraView() {
-        this.renderer.setViewport(this.screenWidth / 2, 0, this.screenWidth / 2, this.screenHeight);
-
-        if (this.isObjectCameraPespective) {
-            console.log('Perspective Props:');
-            console.log(this.objectPerspectiveCamera.fov);
-            console.log(this.objectPerspectiveCamera.far);
-            this.renderer.render(this.scene, this.objectPerspectiveCamera);
-        } else {
-            console.log('Orthographic Props:');
-            console.log(this.objectOrthographicCamera.left);
-            console.log(this.objectOrthographicCamera.far);
-            this.renderer.render(this.scene, this.objectOrthographicCamera);
-        }
     }
 
     private composeCameraScene() {
+
         this.miniWorld();
         this.addCube();
         this.addObjectAxis();
@@ -237,6 +263,7 @@ export class AbstractSpace extends mixins(CameraControls) {
     }
 
     private addLightsAndCameras() {
+
         // camera needs to be added to the scene as it has a child object
         this.directionalLight.target = this.cube;
 
@@ -251,6 +278,7 @@ export class AbstractSpace extends mixins(CameraControls) {
     }
 
     private composeModelScene() {
+
         this.scene.add(this.directionalLight);
 
         this.miniWorld();
@@ -260,6 +288,7 @@ export class AbstractSpace extends mixins(CameraControls) {
     }
 
     private miniWorld() {
+
         const boxGeometry = new BoxBufferGeometry(800, 325, 325);
         const material = new MeshBasicMaterial();
         const edges = new EdgesGeometry(boxGeometry);
@@ -274,10 +303,12 @@ export class AbstractSpace extends mixins(CameraControls) {
     }
 
     private addCube() {
+
         this.scene.add(this.cube);
     }
 
     private addVertices() {
+
         const vertices = new Float32Array([
             100.0, 100.0, 100.0,
             100.0, 100.0, -100.0,
@@ -306,6 +337,7 @@ export class AbstractSpace extends mixins(CameraControls) {
     }
 
     private addObjectAxis() {
+
         const origin = new Vector3(this.cube.position.x, this.cube.position.y, this.cube.position.z);
         const dirX = new Vector3(this.cube.position.x + 1, 0, 0);
         const dirY = new Vector3(0, this.cube.position.y + 1, 0);

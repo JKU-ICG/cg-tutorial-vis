@@ -1,8 +1,5 @@
 <template>
-    <div v-on:mousedown = "mouseDown" v-on:mouseup = "mouseUp">
-        <button v-on:click="switchCameras('Perspective')">Perspective</button>
-        <button v-on:click="switchCameras('Orthographic')">OrthoGraphic</button>
-    </div>
+  <div></div>
 </template>
 
 <script lang = "ts">
@@ -19,40 +16,13 @@ const { mapGetters, mapActions } = createNamespacedHelpers('inputslider');
         ...mapGetters(['cameraX', 'cameraY', 'cameraZ', 'scaleX', 'scaleY', 'scaleZ',
             'translateX', 'translateY', 'translateZ']),
     }})
-export class CameraView extends Vue {
-
-    private isObjectCameraOrtho = false;
-
+export class ObjectCamera extends Vue {
     private abstractSpace = new AbstractSpace();
 
     private mounted() {
 
-        this.abstractSpace.initMainCameraView(this.$el);
-        this.abstractSpace.animateMainCameraView();
-    }
-
-    private switchCameras(camera: string) {
-
-        this.abstractSpace.onSwitchCamera(camera);
-    }
-
-    private mouseDown(event: MouseEvent) {
-
-        document.addEventListener('mousemove', this.mouseMove, false);
-        document.addEventListener('mouseup', this.mouseUp, false);
-
-        this.abstractSpace.animateOnMouseDownEvent(event);
-    }
-
-    private mouseUp(event: MouseEvent) {
-
-        document.removeEventListener('mousemove', this.mouseMove, false);
-        document.removeEventListener('mouseup', this.mouseUp, false);
-    }
-
-    private mouseMove(event: MouseEvent) {
-
-        this.abstractSpace.animateOnMouseMoveEvent(event);
+        this.abstractSpace.initObjectCameraView(this.$el);
+        this.abstractSpace.animateObjectCameraView();
     }
 
     @Watch('cameraX')
@@ -108,7 +78,8 @@ export class CameraView extends Vue {
 
         this.abstractSpace.translateObjZ(valZ);
     }
+
 }
 
-export default CameraView;
+export default ObjectCamera;
 </script>

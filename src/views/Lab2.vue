@@ -2,8 +2,9 @@
   <div>
     <InputSlider/>
     <div class="grid">
-      <div> ModelView<ModelView/> </div>
-      <CameraView/>
+      <div> CameraView <CameraView/> </div>
+      <div> ObjectCamera <ObjectCamera/> </div>
+      <div> ModelView <ModelView/> </div>
   </div>
   </div>
 </template>
@@ -11,8 +12,7 @@
 <style lang="scss">
 .grid {
   display: grid;
-  //grid-template-rows: 250px 250px;
-  grid-template-columns: 100%;
+  grid-template-columns: 50% 50%;
 }
 </style>
 
@@ -20,12 +20,14 @@
 import { Component, Vue } from 'vue-property-decorator';
 import ModelView from '@/components/Lab2/ModelView.vue';
 import CameraView from '@/components/Lab2/CameraView.vue';
+import ObjectCamera from '@/components/Lab2/ObjectCamera.vue';
 import InputSlider from '@/components/Lab2/InputSlider.vue';
 
 @Component({
     components: {
         ModelView,
         CameraView,
+        ObjectCamera,
         InputSlider,
     },
 })

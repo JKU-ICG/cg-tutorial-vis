@@ -66,13 +66,14 @@ export class CameraControls extends Vue {
     private maxDistance: number;
 
     constructor() {
+
         super();
 
         this.screen = {
             left: 0,
             top: 0,
-            width: window.innerWidth,
-            height: window.innerHeight,
+            width: window.innerWidth / 2,
+            height: window.innerHeight / 2,
         };
 
         this.nearPlane = 100;
@@ -80,12 +81,13 @@ export class CameraControls extends Vue {
         this.fov = 50;
         this.frustumSize = 50;
 
-        this.screenAspectRatio = 2 * this.screen.width / this.screen.height;
+        // this.screenAspectRatio = 2 * this.screen.width / this.screen.height;
+        this.screenAspectRatio = this.screen.width / this.screen.height;
 
         this.mainPerspectiveCamera = new PerspectiveCamera(this.fov, this.screenAspectRatio,
             this.nearPlane, this.farPlane);
 
-        this.mainPerspectiveCamera.position.z = 500;
+        this.mainPerspectiveCamera.position.z = 700;
 
         this.nearPlaneObj = 30;
         this.farPlaneObj = 100;
@@ -128,52 +130,97 @@ export class CameraControls extends Vue {
         this.maxDistance = 5000;
     }
 
-    public animateOnMouseDownEvent(event: MouseEvent) {
-        this.rotateStart.set(event.clientX, event.clientY);
+    protected setIsObjCameraPerspective(value: boolean) {
+
+        this.isObjCameraPerspective = value;
     }
 
-    public animateOnMouseMoveEvent(event: MouseEvent, element: HTMLCanvasElement) {
-        this.rotateEnd.set(event.clientX, event.clientY);
-        this.rotateDelta.subVectors(this.rotateEnd, this.rotateStart).multiplyScalar(this.rotateSpeed);
-        this.rotateLeft(2 * Math.PI * this.rotateDelta.x / element.clientHeight);
-        this.rotateUp(2 * Math.PI * this.rotateDelta.y / element.clientHeight);
+    protected getMainCamera() {
 
-        this.rotateStart.copy(this.rotateEnd);
-
-        this.updateAndRotate();
+        return this.mainPerspectiveCamera;
     }
 
-    // Slider operation on Cameras
-    public translateCameraX(valX: number) {
+    protected getObjectPerspectiveCameraHelper() {
+
+        return this.objPerspectiveCameraHelper;
+    }
+
+    protected getObjectOrthographicCameraHelper() {
+
+        return this.objOrthographicCameraHelper;
+    }
+
+    protected getObjectPerspectiveCamera() {
+
+        return this.objPerspectiveCamera;
+    }
+
+    protected getObjectOrthographicCamera() {
+
+        return this.objOrthographicCamera;
+    }
+
+    // Slider operation on Object Camera
+    protected translateCameraX(valX: number) {
+
         this.objPerspectiveCamera.position.x = - valX * 10;
         this.objOrthographicCamera.position.x = - valX * 10;
     }
 
-    public changeCameraFOV(valY: number) {
+    protected changeCameraFOV(valY: number) {
+
         if (this.isObjCameraPerspective) {
 
             this.fov = valY * 10;
             this.objPerspectiveCamera.fov = this.fov;
-            console.log('Perspective: Y', this.objPerspectiveCamera.fov);
         } else {
 
             this.frustumSize = valY * 10;
             this.objOrthographicCamera.left = - this.frustumSize;
             this.objOrthographicCamera.right = this.frustumSize;
-            this.objOrthographicCamera.top = - this.frustumSize;
-            this.objOrthographicCamera.bottom = this.frustumSize;
-            console.log('Orthographic: Y', this.frustumSize);
+            this.objOrthographicCamera.top = this.frustumSize;
+            this.objOrthographicCamera.bottom = - this.frustumSize;
         }
     }
 
-    public changeCameraFar(valZ: number) {
+    protected changeCameraFar(valZ: number) {
+
         this.farPlaneObj = valZ * 100;
         this.objPerspectiveCamera.far = this.farPlaneObj;
         this.objOrthographicCamera.far = this.farPlaneObj;
     }
 
+    // Main Camera Operations on Mouse Events
+    protected startRotationOnMouseDown(event: MouseEvent) {
+        this.rotateStart.set(event.clientX, event.clientY);
+    }
+
+    protected rotateOnMouseMove(event: MouseEvent, element: HTMLCanvasElement) {
+
+        this.rotateEnd.set(event.clientX, event.clientY);
+        this.rotateDelta.subVectors(this.rotateEnd, this.rotateStart).multiplyScalar(this.rotateSpeed);
+
+        this.rotateLeft(2 * Math.PI * this.rotateDelta.x / element.clientHeight);
+        this.rotateUp(2 * Math.PI * this.rotateDelta.y / element.clientHeight);
+
+        this.rotateStart.copy(this.rotateEnd);
+
+        this.updateAndRotateMainCamera();
+    }
+
+    protected resetMainCamera() {
+
+        this.target.copy(this.target0);
+
+        this.mainPerspectiveCamera.position.copy(this.position0);
+        this.mainPerspectiveCamera.updateProjectionMatrix();
+
+        this.updateAndRotateMainCamera();
+    }
+
     // ported from Orbitcontrols in three.js
-    protected updateAndRotate() {
+    protected updateAndRotateMainCamera() {
+
         const position = this.mainPerspectiveCamera.position;
 
         const offset = new Vector3();
@@ -210,45 +257,15 @@ export class CameraControls extends Vue {
         this.scale = 1;
     }
 
-    protected setIsObjCameraPerspective(value: boolean) {
-        this.isObjCameraPerspective = value;
-    }
-
-    protected getMainCamera() {
-        return this.mainPerspectiveCamera;
-    }
-
-    protected getObjectPerspectiveCameraHelper() {
-        return this.objPerspectiveCameraHelper;
-    }
-
-    protected getObjectOrthographicCameraHelper() {
-        return this.objOrthographicCameraHelper;
-    }
-
-    protected getObjectPerspectiveCamera() {
-        return this.objPerspectiveCamera;
-    }
-
-    protected getObjectOrthographicCamera() {
-        return this.objOrthographicCamera;
-    }
-
-    protected reset() {
-        this.target.copy(this.target0);
-        this.mainPerspectiveCamera.position.copy(this.position0);
-        this.mainPerspectiveCamera.updateProjectionMatrix();
-        this.updateAndRotate();
-    }
-
     private rotateLeft(angle: number) {
+
         this.sphericalDelta.theta -= angle;
     }
 
     private rotateUp(angle: number) {
+
         this.sphericalDelta.phi -= angle;
     }
-
 }
 
 export default CameraControls;
