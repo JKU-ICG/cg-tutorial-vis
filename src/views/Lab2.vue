@@ -2,9 +2,10 @@
   <div>
     <Settings/>
     <div class="grid">
-      <div> CameraView <CameraView/> </div>
+      <!-- <div> CameraView <CameraView/> </div>
       <div> OutputView <OutputView/> </div>
-      <div> ModelView <ModelView/> </div>
+      <div> ModelView <ModelView/> </div> -->
+      <Test/>
   </div>
   </div>
 </template>
@@ -22,6 +23,7 @@ import ModelView from '@/components/Lab2/ModelView.vue';
 import CameraView from '@/components/Lab2/CameraView.vue';
 import OutputView from '@/components/Lab2/OutputView.vue';
 import Settings from '@/components/Lab2/Settings.vue';
+import Test from '@/components/Lab2/Test.vue';
 
 @Component({
     components: {
@@ -29,6 +31,7 @@ import Settings from '@/components/Lab2/Settings.vue';
         CameraView,
         OutputView,
         Settings,
+        Test,
     },
 })
 export default class Lab2 extends Vue { }
