@@ -6,6 +6,10 @@ import { CopyShader } from './three-copyshader';
 
 import { ShaderPass } from './three-shaderpass';
 
+import { MaskPass } from './three-maskpass';
+
+import { ClearMaskPass } from './three-clearmask';
+
 export class EffectComposer {
 
     private renderer: WebGLRenderer;
@@ -32,6 +36,7 @@ export class EffectComposer {
             };
 
             const size = this.renderer.getDrawingBufferSize();
+
             renderTarget = new WebGLRenderTarget(size.width, size.height, parameters);
             renderTarget.texture.name = 'EffectComposer.rt2';
         }
@@ -57,10 +62,10 @@ export class EffectComposer {
 
     public addPass(pass: any) {
 
-        this.passes.push(pass);
-
         const size = this.renderer.getDrawingBufferSize();
         pass.setSize(size.width, size.height);
+
+        this.passes.push(pass);
     }
 
     public insertPass(pass: any, index: number) {
@@ -70,7 +75,7 @@ export class EffectComposer {
 
     public render(delta?: number) {
 
-        const maskActive = false;
+        let maskActive = false;
 
         let pass;
 
@@ -101,6 +106,14 @@ export class EffectComposer {
 
                 this.swapBuffers();
 
+            }
+
+            if (pass instanceof MaskPass) {
+
+                maskActive = true;
+            } else {
+
+                maskActive = false;
             }
         }
 

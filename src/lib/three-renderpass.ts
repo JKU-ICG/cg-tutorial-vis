@@ -84,6 +84,5 @@ export class RenderPass extends Pass {
 
         this.scene.overrideMaterial = null;
         renderer.autoClear = oldAutoClear;
-
     }
 }

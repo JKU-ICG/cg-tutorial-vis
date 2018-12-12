@@ -11,5 +11,6 @@ export class ClearMaskPass extends Pass {
         delta?: number,
         maskActive?: boolean) {
 
+        renderer.state.buffers.stencil.setTest(false);
     }
 }

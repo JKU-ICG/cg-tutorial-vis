@@ -48,6 +48,7 @@ export class Test extends Vue {
 
         this.$el.appendChild(this.renderer.domElement);
 
+        this.scene.background = new Color(0xf0f0f0);
         this.camera.position.set(0, 0, 30);
 
         this.scene.add(this.sphere);
