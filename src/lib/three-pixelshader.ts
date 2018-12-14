@@ -10,7 +10,7 @@ export const PixelShader: Shader = {
 
     vertexShader: [
 
-        'varying vec2 vUv;',
+        'varying highp vec2 vUv;',
 
         'void main() {',
 

@@ -1,5 +1,5 @@
 <template>
-    <div id = "sliderbar" style="height: 50px; width: 100px">
+    <div class="settings-view">
         <div>
             <button v-on:click="toggleValue(true)">Perspective</button>
             <button v-on:click="toggleValue(false)">OrthoGraphic</button>
@@ -27,6 +27,18 @@
         </div>
     </div>
 </template>
+
+
+<style lang="scss">
+.settings-view > div {
+  margin: 40px 0;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+</style>
+
 <script lang="ts">
 import Vue from 'vue';
 import { createNamespacedHelpers } from 'vuex';

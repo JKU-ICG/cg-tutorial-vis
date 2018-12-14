@@ -11,8 +11,7 @@ import {
     PerspectiveCamera, Scene, WebGLRenderer, BoxBufferGeometry,
     MeshBasicMaterial, EdgesGeometry, LineSegments, BoxHelper,
     SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color,
-    CameraHelper, Vector2, MeshPhongMaterial, DirectionalLight, log, OrthographicCamera} from 'three';
-
+    CameraHelper, Vector2, MeshPhongMaterial, DirectionalLight, OrthographicCamera, DirectGeometry} from 'three';
 
 // Scene comprises of a world and an object
 
@@ -49,7 +48,13 @@ export class AbstractSpace extends mixins(CameraControls) {
     private isObjectCameraPespective: boolean;
 
     // Light
+    private directionalLightModelView: DirectionalLight;
+
     private directionalLight: DirectionalLight;
+
+    private dirX: number;
+    private dirY: number;
+    private dirZ: number;
 
     constructor() {
 
@@ -85,7 +90,15 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.cube = new Mesh(new BoxBufferGeometry(200, 200, 200), material);
 
         this.directionalLight = new DirectionalLight(0xffffff, 1);
-        this.directionalLight.position.set(1, 1, 1).normalize();
+
+        this.dirX = - this.objectPerspectiveCamera.position.x;
+        this.dirY = - this.objectPerspectiveCamera.position.y;
+        this.dirZ = - this.objectPerspectiveCamera.position.z;
+
+        this.directionalLight.position.set(this.dirX, this.dirY, this.dirZ).normalize();
+
+        this.directionalLightModelView = new DirectionalLight(0xffffff, 1);
+        this.directionalLightModelView.position.set(1, 1, 1).normalize();
     }
 
     public initModelView(el: HTMLElement) {
@@ -231,8 +244,12 @@ export class AbstractSpace extends mixins(CameraControls) {
             this.objectPerspectiveCameraHelper.visible = true;
             this.objectOrthographicCameraHelper.visible = false;
 
+            if (this.cube.position.z !== 0) { // if cube is not in default position
+
+                this.objectPerspectiveCamera.lookAt(this.cube.position);
+            }
+
             this.objectPerspectiveCamera.updateProjectionMatrix();
-            this.objectPerspectiveCamera.lookAt(this.cube.position);
 
             this.objectPerspectiveCameraHelper.update();
         } else {
@@ -274,7 +291,7 @@ export class AbstractSpace extends mixins(CameraControls) {
 
     private composeModelScene() {
 
-        this.scene.add(this.directionalLight);
+        this.scene.add(this.directionalLightModelView);
 
         this.miniWorld();
         this.addVertices();

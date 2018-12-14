@@ -1,17 +1,26 @@
 <template>
-  <div>
+  <div class="lab">
+    <div class="settings">
     <Settings/>
-    <div class="grid">
-      <!-- <div> CameraView <CameraView/> </div>
+    </div>
+    <div class="views">
+      <div> CameraView <CameraView/> </div>
       <div> OutputView <OutputView/> </div>
-      <div> ModelView <ModelView/> </div> -->
-      <Test/>
+      <div> ModelView <ModelView/> </div>
+      <Test2/>
   </div>
   </div>
 </template>
 
 <style lang="scss">
-.grid {
+.lab {
+  display: flex;
+}
+.settings {
+  flex: 1 0 200px;
+}
+.views {
+  width: 100%;
   display: grid;
   grid-template-columns: 50% 50%;
 }
@@ -23,7 +32,7 @@ import ModelView from '@/components/Lab2/ModelView.vue';
 import CameraView from '@/components/Lab2/CameraView.vue';
 import OutputView from '@/components/Lab2/OutputView.vue';
 import Settings from '@/components/Lab2/Settings.vue';
-import Test from '@/components/Lab2/Test.vue';
+import Test2 from '@/components/Lab2/Test2.vue';
 
 @Component({
     components: {
@@ -31,7 +40,7 @@ import Test from '@/components/Lab2/Test.vue';
         CameraView,
         OutputView,
         Settings,
-        Test,
+        Test2,
     },
 })
 export default class Lab2 extends Vue { }

@@ -37,6 +37,10 @@ export class CameraControls extends Vue {
     private nearPlaneObj: number;
     private farPlaneObj: number;
 
+    private posXObj: number;
+    private posYObj: number;
+    private posZObj: number;
+
     private screenAspectRatio: number;
 
     // Orbit Controls Params
@@ -78,7 +82,7 @@ export class CameraControls extends Vue {
 
         this.nearPlane = 100;
         this.farPlane = 10000;
-        this.fov = 50;
+        this.fov = 40;
         this.frustumSize = 50;
 
         // this.screenAspectRatio = 2 * this.screen.width / this.screen.height;
@@ -90,15 +94,26 @@ export class CameraControls extends Vue {
         this.mainPerspectiveCamera.position.z = 700;
 
         this.nearPlaneObj = 30;
-        this.farPlaneObj = 100;
+        this.farPlaneObj = 400;
+
+        this.posXObj = 0;
+        this.posYObj = 10;
+        this.posZObj = 400;
 
         this.objPerspectiveCamera = new PerspectiveCamera(this.fov, this.screenAspectRatio,
             this.nearPlaneObj, this.farPlaneObj);
+
+        // look at and dir should be opposite to each other
+        this.objPerspectiveCamera.lookAt(-this.posXObj, -this.posYObj, -this.posZObj);
+        this.objPerspectiveCamera.position.set(this.posXObj, this.posYObj, this.posZObj);
 
         this.objPerspectiveCameraHelper = new CameraHelper(this.objPerspectiveCamera);
 
         this.objOrthographicCamera = new OrthographicCamera(- this.frustumSize, this.frustumSize,
             this.frustumSize, - this.frustumSize, this.nearPlaneObj, this.farPlaneObj);
+
+        this.objOrthographicCamera.lookAt(-this.posXObj, -this.posYObj, -this.posZObj);
+        this.objOrthographicCamera.position.set(this.posXObj, this.posYObj, this.posZObj);
 
         this.objOrthographicCameraHelper = new CameraHelper(this.objOrthographicCamera);
 
