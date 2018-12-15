@@ -18,6 +18,7 @@
         
         <script id="fragmentShader" type="x-shader/x-fragment">
 
+            precision mediump float;
             precision mediump int;
             uniform float time;
             varying vec3 vPosition;
@@ -39,9 +40,9 @@ import { watch } from 'fs';
 
 import {
     PerspectiveCamera, Scene, WebGLRenderer, Mesh, SphereBufferGeometry,
-    MeshPhongMaterial,
-    Color, PlaneBufferGeometry, MeshBasicMaterial, RawShaderMaterial} from 'three';
-
+    MeshPhongMaterial, Color, PlaneBufferGeometry, MeshBasicMaterial,
+    RawShaderMaterial, BufferGeometry, Float32BufferAttribute,
+    Uint8BufferAttribute, DoubleSide} from 'three';
 
 @Component({})
 export class Test2 extends Vue {
@@ -49,40 +50,59 @@ export class Test2 extends Vue {
     private renderer = new WebGLRenderer();
     private scene = new Scene();
     private camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-    private geometry = new SphereBufferGeometry(10, 64, 64);
-    private material = new MeshPhongMaterial({ color: 0xff0000, shininess: 200 });
-    private sphere = new Mesh(this.geometry, this.material);
-    private quad: any;
+    private geometry = new BufferGeometry();
+    private material: any;
 
     private mounted() {
         this.init();
         this.animate();
     }
 
-    // Change
     private init() {
         this.camera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10);
         this.camera.position.z = 2;
         this.scene = new Scene();
         this.scene.background = new Color(0x101010);
 
+        const triangles = 500;
 
-        this.quad = new Mesh(new PlaneBufferGeometry(2, 2), new MeshBasicMaterial({ color: 0xffffff }));
-        this.quad.frustumCulled = false; // Avoid getting clipped
-        this.scene.add(this.quad);
+        const positions = [];
+        const colors = [];
 
-        this.scene.add(this.sphere);
+        for (let i = 0; i < triangles; i++) {
+            positions.push(Math.random() - 0.5);
+            positions.push(Math.random() - 0.5);
+            positions.push(Math.random() - 0.5);
 
-        const material = new RawShaderMaterial({
+            colors.push(Math.random() * 255);
+            colors.push(Math.random() * 255);
+            colors.push(Math.random() * 255);
+            colors.push(Math.random() * 255);
+        }
+
+
+        const positionAttribute = new Float32BufferAttribute(positions, 3);
+        const colorAttribute = new Uint8BufferAttribute(colors, 4);
+
+        colorAttribute.normalized = true;
+
+        this.geometry.addAttribute('position', positionAttribute);
+        this.geometry.addAttribute('color', colorAttribute);
+
+        this.material = new RawShaderMaterial({
             uniforms: {
                 time: { value: 1.0 },
             },
             vertexShader: document.getElementById('vertexShader')!.textContent || '',
             fragmentShader: document.getElementById('fragmentShader')!.textContent || '',
+            side: DoubleSide,
+            transparent: true,
         });
 
+        const mesh = new Mesh(this.geometry, this.material);
 
-        this.quad.material = material;
+        this.scene.add(mesh);
+
 
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -93,6 +113,13 @@ export class Test2 extends Vue {
 
     private animate() {
         requestAnimationFrame(this.animate);
+        const time = performance.now();
+
+        const object = this.scene.children[0];
+
+        object.rotation.y = time * 0.0005;
+        // object.material.uniforms.time.value = time * 0.005;
+
         this.renderer.render(this.scene, this.camera);
     }
 
