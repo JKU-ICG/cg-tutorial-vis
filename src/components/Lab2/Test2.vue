@@ -1,32 +1,31 @@
 <template>
     <div>
         <script id="vertexShader" type="x-shader/x-vertex">
-            precision mediump float;
-            precision mediump int;
-            uniform mat4 modelViewMatrix; // optional
-            uniform mat4 projectionMatrix; // optional
-            attribute vec3 position;
-            attribute vec4 color;
-            varying vec3 vPosition;
-            varying vec4 vColor;
+            
+            varying vec2 vUv;
+
             void main()	{
-                vPosition = position;
-                vColor = color;
+                vUv = uv;
                 gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
             }
         </script>
         
         <script id="fragmentShader" type="x-shader/x-fragment">
 
-            precision mediump float;
-            precision mediump int;
             uniform float time;
-            varying vec3 vPosition;
-            varying vec4 vColor;
-            void main()	{
-                vec4 color = vec4( vColor );
-                color.r += sin( vPosition.x * 10.0 + time ) * 0.5;
-                gl_FragColor = color;
+            uniform sampler2D texture;
+            varying vec2 vUv;
+            void main( void ) {
+                vec2 position = - 1.0 + 2.0 * vUv;
+                float a = atan( position.y, position.x );
+                float r = sqrt( dot( position, position ) );
+                vec2 uv;
+                uv.x = cos( a ) / r;
+                uv.y = sin( a ) / r;
+                uv /= 10.0;
+                uv += time * 0.05;
+                vec3 color = texture2D( texture, uv ).rgb;
+                gl_FragColor = vec4( color * r * 1.5, 1.0 );
             }
         </script>
     </div>
@@ -42,7 +41,9 @@ import {
     PerspectiveCamera, Scene, WebGLRenderer, Mesh, SphereBufferGeometry,
     MeshPhongMaterial, Color, PlaneBufferGeometry, MeshBasicMaterial,
     RawShaderMaterial, BufferGeometry, Float32BufferAttribute,
-    Uint8BufferAttribute, DoubleSide} from 'three';
+    Uint8BufferAttribute, DoubleSide, Vector2, LinearFilter,
+    RGBAFormat, WebGLRenderTarget, ShaderMaterial, SphereGeometry,
+    DirectionalLight, HemisphereLight, TextureLoader, RepeatWrapping, BoxBufferGeometry} from 'three';
 
 @Component({})
 export class Test2 extends Vue {
@@ -50,7 +51,7 @@ export class Test2 extends Vue {
     private renderer = new WebGLRenderer();
     private scene = new Scene();
     private camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-    private geometry = new BufferGeometry();
+    private geometry: any;
     private material: any;
 
     private mounted() {
@@ -59,50 +60,30 @@ export class Test2 extends Vue {
     }
 
     private init() {
-        this.camera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10);
-        this.camera.position.z = 2;
+        this.camera = new PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 3000);
         this.scene = new Scene();
-        this.scene.background = new Color(0x101010);
+        this.scene.background = new Color(0xffffff);
+        this.camera.position.z = 4;
 
-        const triangles = 500;
+        const uniforms1 = {
+            time: { value: 1.0 },
+            texture: { value: new TextureLoader().load('disturb.jpg') },
+        };
 
-        const positions = [];
-        const colors = [];
+        uniforms1.texture.value.wrapS = uniforms1.texture.value.wrapT = RepeatWrapping;
 
-        for (let i = 0; i < triangles; i++) {
-            positions.push(Math.random() - 0.5);
-            positions.push(Math.random() - 0.5);
-            positions.push(Math.random() - 0.5);
-
-            colors.push(Math.random() * 255);
-            colors.push(Math.random() * 255);
-            colors.push(Math.random() * 255);
-            colors.push(Math.random() * 255);
-        }
-
-
-        const positionAttribute = new Float32BufferAttribute(positions, 3);
-        const colorAttribute = new Uint8BufferAttribute(colors, 4);
-
-        colorAttribute.normalized = true;
-
-        this.geometry.addAttribute('position', positionAttribute);
-        this.geometry.addAttribute('color', colorAttribute);
-
-        this.material = new RawShaderMaterial({
-            uniforms: {
-                time: { value: 1.0 },
-            },
+        this.material = new ShaderMaterial({
+            uniforms: uniforms1,
             vertexShader: document.getElementById('vertexShader')!.textContent || '',
             fragmentShader: document.getElementById('fragmentShader')!.textContent || '',
-            side: DoubleSide,
-            transparent: true,
         });
 
-        const mesh = new Mesh(this.geometry, this.material);
 
-        this.scene.add(mesh);
+        this.geometry = new BoxBufferGeometry(0.75, 0.75, 0.75);
 
+        const cube = new Mesh(this.geometry, this.material);
+
+        this.scene.add(cube);
 
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);

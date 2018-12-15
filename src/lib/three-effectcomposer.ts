@@ -31,7 +31,7 @@ export class EffectComposer {
             const parameters = {
                 minFilter: LinearFilter,
                 magFilter: LinearFilter,
-                foramt: RGBAFormat,
+                format: RGBAFormat,
                 stencilBuffer: false,
             };
 
