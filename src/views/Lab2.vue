@@ -4,10 +4,10 @@
     <Settings/>
     </div>
     <div class="views">
-      <!-- <div> CameraView <CameraView/> </div>
+      <div> CameraView <CameraView/> </div>
       <div> OutputView <OutputView/> </div>
-      <div> ModelView <ModelView/> </div> -->
-      <Test3/>
+      <div> ModelView <ModelView/> </div>
+      <div> Rasterization View <Rasterization/> </div>
   </div>
   </div>
 </template>
@@ -32,7 +32,7 @@ import ModelView from '@/components/Lab2/ModelView.vue';
 import CameraView from '@/components/Lab2/CameraView.vue';
 import OutputView from '@/components/Lab2/OutputView.vue';
 import Settings from '@/components/Lab2/Settings.vue';
-import Test3 from '@/components/Lab2/Test3.vue';
+import Rasterization from '@/components/Lab2/RasterizationView.vue';
 
 @Component({
     components: {
@@ -40,7 +40,7 @@ import Test3 from '@/components/Lab2/Test3.vue';
         CameraView,
         OutputView,
         Settings,
-        Test3,
+        Rasterization,
     },
 })
 export default class Lab2 extends Vue { }

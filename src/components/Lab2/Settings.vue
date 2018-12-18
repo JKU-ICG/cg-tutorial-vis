@@ -7,9 +7,9 @@
 
         <div>
             Scale Object
-            <vue-slider ref="slider" v-model='scaleX' :min ="1" :max="10"></vue-slider>
-            <vue-slider ref="slider" v-model='scaleY' :min ="1" :max="10"></vue-slider>
-            <vue-slider ref="slider" v-model='scaleZ' :min ="1" :max="10"></vue-slider>
+             <vue-slider ref="slider" v-model='scaleX' :min ="1" :max="10"></vue-slider>
+             <vue-slider ref="slider" v-model='scaleY' :min ="1" :max="10"></vue-slider>
+             <vue-slider ref="slider" v-model='scaleZ' :min ="1" :max="10"></vue-slider>
         </div>
 
         <div>
