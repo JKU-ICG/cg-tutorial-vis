@@ -14,17 +14,21 @@
         <script id="fragmentShader" type="x-shader/x-fragment">
             
             uniform sampler2D texture;
-            uniform float pixelSize;
-            uniform vec2 resolution;
-
             varying vec2 vUv;
+
             void main( void ) {
-                
-                vec2 dxy = pixelSize / resolution;
-                vec2 coord = dxy * floor ( vUv / dxy);
-                
-                gl_FragColor = texture2D( texture, coord );
-                
+
+                float x = fract(vUv.x * 20.0);
+                float y = fract(vUv.y * 20.0);
+
+                if(( x > 0.9 && x < 1.0 ) || ( y > 0.9 && y < 1.0 ))
+                {
+                    gl_FragColor = vec4(0.2,0.2,0.2,0.2);
+                }
+                else
+                {
+                    gl_FragColor = texture2D( texture, vUv );
+                }
             }
         </script>
     </div>
@@ -45,13 +49,16 @@ import {
     DirectionalLight, HemisphereLight, TextureLoader, RepeatWrapping,
     BoxBufferGeometry, NearestFilter, AnyLoader, BoxGeometry, OrthographicCamera,
     ClampToEdgeWrapping,
-    Texture} from 'three';
+    Texture,
+    MeshDepthMaterial} from 'three';
+
+import { AbstractSpace } from '@/components/Lab2/AbstractSpace.vue';
 
 @Component({})
 export class Rasterization extends Vue {
 
-    private screenWidth = window.innerWidth / 2;
-    private screenHeight = window.innerHeight / 2;
+    private screenWidth = 600;
+    private screenHeight = 600;
     private aspectRatio: any;
 
     private renderer: any;
@@ -62,7 +69,12 @@ export class Rasterization extends Vue {
     private bufferTexture: any;
     private bufferUniforms: any;
 
-    private boxMesh: any;
+    private planeMesh: any;
+    private abstractSpace = new AbstractSpace();
+
+    private planeMaterial: any;
+
+    private timeValue: number = 0.0;
 
     private mounted() {
         this.init();
@@ -73,7 +85,8 @@ export class Rasterization extends Vue {
 
         this.aspectRatio = this.screenWidth / this.screenHeight;
 
-        this.camera = new PerspectiveCamera(70, this.aspectRatio, 1, 1000);
+        this.camera = new PerspectiveCamera(50, this.aspectRatio, 100, 10000);
+        this.camera.position.z = 700;
 
         this.initRenderer();
         this.createBufferScene();
@@ -86,11 +99,7 @@ export class Rasterization extends Vue {
 
         requestAnimationFrame(this.animate);
 
-        this.renderer.render(this.bufferScene, this.camera, this.bufferTexture);
-
-        this.boxMesh.rotation.x += 0.001;
-        this.boxMesh.rotation.y += 0.001;
-        this.boxMesh.rotation.z += 0.001;
+        this.renderer.render(this.bufferScene, this.camera, this.bufferTexture, true);
 
         this.renderer.render(this.scene, this.camera);
     }
@@ -100,6 +109,7 @@ export class Rasterization extends Vue {
         this.renderer = new WebGLRenderer();
 
         this.renderer.setPixelRatio(window.devicePixelRatio);
+
         this.renderer.setSize(this.screenWidth, this.screenHeight);
 
         this.$el.appendChild(this.renderer.domElement);
@@ -109,40 +119,48 @@ export class Rasterization extends Vue {
 
         this.bufferScene = new Scene();
 
-        const cubeGeometry = new BoxBufferGeometry(2, 2, 2);
+        const planeGeometry = new PlaneBufferGeometry(500, 500);
 
-        const cubeMaterial = new MeshBasicMaterial({ color: 0xF06565 });
+        const planeMaterial = new MeshPhongMaterial({
+            color: 0x2194ce,
+            specular: new Color().setHSL(0.1, 0.5, 0.5),
+            reflectivity: 0.2,
+            shininess: 4,
+            wireframe: true,
+        });
 
-        const cube = new Mesh(cubeGeometry, cubeMaterial);
+        const plane = new Mesh(planeGeometry, planeMaterial);
 
-        cube.position.z = -10;
+        plane.position.z = -10;
 
-        this.bufferScene.add(cube);
+        const directionalLightModelView = new DirectionalLight(0xffffff, 1);
+        directionalLightModelView.position.set(1, 1, 1).normalize();
+
+        this.bufferScene.add(plane);
+        this.bufferScene.add(directionalLightModelView);
     }
 
     private createBufferTexture() {
 
         const parameters = {
-            minFilter: LinearFilter,
-            magFilter: LinearFilter,
+            minFilter: NearestFilter,
+            magFilter: NearestFilter,
             format: RGBAFormat,
             stencilBuffer: false,
         };
 
-        this.bufferTexture = new WebGLRenderTarget(window.innerWidth, window.innerHeight, parameters);
+        this.bufferTexture = new WebGLRenderTarget(this.screenWidth / 30, this.screenHeight / 30, parameters);
     }
 
     private createBufferUniforms() {
 
-        const resValue = new Vector2(window.innerWidth, window.innerHeight)
-            .multiplyScalar(window.devicePixelRatio);
-
         const textureVal = this.bufferTexture.texture;
+        textureVal.wrapS = ClampToEdgeWrapping;
+        textureVal.wrapT = ClampToEdgeWrapping;
+        textureVal.repeat.set(4, 4);
 
         this.bufferUniforms = {
-            texture: { value: textureVal },
-            resolution: { value: resValue },
-            pixelSize: { value: 2.0 },
+            'texture': { value: textureVal },
         };
     }
 
@@ -152,19 +170,23 @@ export class Rasterization extends Vue {
 
         this.scene.background = new Color(0xffffff);
 
-        const boxMaterial = new ShaderMaterial({
+        this.planeMaterial = new ShaderMaterial({
             uniforms: this.bufferUniforms,
             vertexShader: document.getElementById('vertexShader')!.textContent || '',
             fragmentShader: document.getElementById('fragmentShader')!.textContent || '',
         });
 
-        const boxGeometry = new BoxBufferGeometry(5, 5, 5);
+        const planeGeometry = new PlaneBufferGeometry(500, 500);
 
-        this.boxMesh = new Mesh(boxGeometry, boxMaterial);
+        this.planeMesh = new Mesh(planeGeometry, this.planeMaterial);
 
-        this.boxMesh.position.z = -10;
+        this.planeMesh.position.z = -10;
 
-        this.scene.add(this.boxMesh);
+        const directionalLightModelView = new DirectionalLight(0xffffff, 1);
+        directionalLightModelView.position.set(1, 1, 1).normalize();
+
+        this.scene.add(this.planeMesh);
+        this.scene.add(directionalLightModelView);
     }
 }
 

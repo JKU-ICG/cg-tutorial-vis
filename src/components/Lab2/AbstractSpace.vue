@@ -139,6 +139,18 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.renderer.render(this.scene, this.mainCamera);
     }
 
+    public getScene() {
+        return this.scene;
+    }
+
+    public getRenderer() {
+        return this.renderer;
+    }
+
+    public getPerspectiveCamera() {
+        return this.objectPerspectiveCamera;
+    }
+
     public animateObjectCameraView() {
 
         requestAnimationFrame(this.animateObjectCameraView.bind(this));

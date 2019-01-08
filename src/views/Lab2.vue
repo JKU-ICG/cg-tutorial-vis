@@ -4,9 +4,9 @@
     <Settings/>
     </div>
     <div class="views">
-      <div> CameraView <CameraView/> </div>
+      <!-- <div> CameraView <CameraView/> </div>
       <div> OutputView <OutputView/> </div>
-      <div> ModelView <ModelView/> </div>
+      <div> ModelView <ModelView/> </div> -->
       <div> Rasterization View <Rasterization/> </div>
   </div>
   </div>
