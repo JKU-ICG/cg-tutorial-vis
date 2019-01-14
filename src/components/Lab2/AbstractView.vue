@@ -13,11 +13,11 @@ import {
     SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color,
     CameraHelper, Vector2, MeshPhongMaterial, DirectionalLight,
     OrthographicCamera, WebGLRenderTarget, NearestFilter, RGBAFormat,
-    ShaderMaterial, Texture, AmbientLight, PlaneBufferGeometry, ClampToEdgeWrapping} from 'three';
+    ShaderMaterial, AmbientLight, PlaneBufferGeometry, ClampToEdgeWrapping} from 'three';
 
 // Scene comprises of a world and an object
 
-export class AbstractSpace extends mixins(CameraControls) {
+export class AbstractView extends mixins(CameraControls) {
 
     // Renderer Properties
     private renderer: WebGLRenderer;
@@ -143,16 +143,16 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.initRenderer(el);
     }
 
-    public initOutputView(el: HTMLElement) {
-
-        this.composeCameraScene();
-        this.initRenderer(el);
-    }
-
     public initRasterView(el: HTMLElement, rasterVertexShader: string, rasterFragmentShader: string) {
 
         this.composeRasterScene(rasterVertexShader, rasterFragmentShader);
 
+        this.initRenderer(el);
+    }
+
+    public initOutputView(el: HTMLElement) {
+
+        this.composeCameraScene();
         this.initRenderer(el);
     }
 
@@ -174,23 +174,6 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.renderer.render(this.scene, this.mainCamera);
     }
 
-    public animateOutputView() {
-
-        requestAnimationFrame(this.animateOutputView.bind(this));
-
-        this.updateObjectCamera();
-
-        if (this.isObjectCameraPespective) {
-
-            this.objectPerspectiveCameraHelper.visible = false;
-            this.renderer.render(this.scene, this.objectPerspectiveCamera);
-        } else {
-
-            this.objectOrthographicCameraHelper.visible = false;
-            this.renderer.render(this.scene, this.objectOrthographicCamera);
-        }
-    }
-
     public animateRasterView() {
 
         requestAnimationFrame(this.animateRasterView.bind(this));
@@ -207,6 +190,23 @@ export class AbstractSpace extends mixins(CameraControls) {
             this.objectOrthographicCameraHelper.visible = false;
             this.renderer.render(this.scene, this.objectOrthographicCamera, this.texture, true);
             this.renderer.render(this.rasterizedScene, this.objectOrthographicCamera);
+        }
+    }
+
+    public animateOutputView() {
+
+        requestAnimationFrame(this.animateOutputView.bind(this));
+
+        this.updateObjectCamera();
+
+        if (this.isObjectCameraPespective) {
+
+            this.objectPerspectiveCameraHelper.visible = false;
+            this.renderer.render(this.scene, this.objectPerspectiveCamera);
+        } else {
+
+            this.objectOrthographicCameraHelper.visible = false;
+            this.renderer.render(this.scene, this.objectOrthographicCamera);
         }
     }
 
@@ -328,6 +328,16 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.renderer.clear();
     }
 
+    private composeModelScene() {
+
+        this.scene.add(this.directionalLightModelView);
+        this.scene.add(this.ambientLight);
+
+        this.miniWorld();
+        this.addCube();
+        this.addObjectAxis();
+    }
+
     private composeCameraScene() {
 
         this.miniWorld();
@@ -402,16 +412,6 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.scene.add(this.objectOrthographicCameraHelper);
     }
 
-    private composeModelScene() {
-
-        this.scene.add(this.directionalLightModelView);
-        this.scene.add(this.ambientLight);
-
-        this.miniWorld();
-        this.addCube();
-        this.addObjectAxis();
-    }
-
     private miniWorld() {
 
         const boxGeometry = new BoxBufferGeometry(800, 325, 325);
@@ -478,5 +478,5 @@ export class AbstractSpace extends mixins(CameraControls) {
     }
 }
 
-export default AbstractSpace;
+export default AbstractView;
 </script>

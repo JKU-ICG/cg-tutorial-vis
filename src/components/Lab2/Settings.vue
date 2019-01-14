@@ -28,8 +28,8 @@
 
          <div>
             Change Camera Settings
-            <vue-slider ref="slider" v-model='fov' :min ="1" :max="10"></vue-slider>
-            <vue-slider ref="slider" v-model='far' :min ="1" :max="10"></vue-slider>
+            FOV <vue-slider ref="slider" v-model='fov' :min ="1" :max="10"></vue-slider>
+            FAR <vue-slider ref="slider" v-model='far' :min ="1" :max="10"></vue-slider>
         </div>
     </div>
 </template>

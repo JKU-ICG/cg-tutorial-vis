@@ -7,7 +7,7 @@
 import Vue from 'vue';
 import { Component, Watch } from 'vue-property-decorator';
 import { createNamespacedHelpers } from 'vuex';
-import { AbstractSpace } from '@/components/Lab2/AbstractSpace.vue';
+import { AbstractView } from '@/components/Lab2/AbstractView.vue';
 import { watch } from 'fs';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('settings');
@@ -21,12 +21,12 @@ export class CameraView extends Vue {
 
     private isObjectCameraOrtho = false;
 
-    private abstractSpace = new AbstractSpace();
+    private abstractView = new AbstractView();
 
     private mounted() {
 
-        this.abstractSpace.initCameraView(this.$el);
-        this.abstractSpace.animateCameraView();
+        this.abstractView.initCameraView(this.$el);
+        this.abstractView.animateCameraView();
     }
 
     private mouseDown(event: MouseEvent) {
@@ -34,7 +34,7 @@ export class CameraView extends Vue {
         document.addEventListener('mousemove', this.mouseMove, false);
         document.addEventListener('mouseup', this.mouseUp, false);
 
-        this.abstractSpace.animateOnMouseDownEvent(event);
+        this.abstractView.animateOnMouseDownEvent(event);
     }
 
     private mouseUp(event: MouseEvent) {
@@ -45,79 +45,79 @@ export class CameraView extends Vue {
 
     private mouseMove(event: MouseEvent) {
 
-        this.abstractSpace.animateOnMouseMoveEvent(event);
+        this.abstractView.animateOnMouseMoveEvent(event);
     }
 
     @Watch('isCameraPerspective')
     private switchCamera(isCameraPersp: boolean) {
 
-        this.abstractSpace.onSwitchCamera(isCameraPersp);
+        this.abstractView.onSwitchCamera(isCameraPersp);
     }
 
     @Watch('cameraX')
     private translateCameraX(valX: number) {
 
-        this.abstractSpace.changeCameraX(valX);
+        this.abstractView.changeCameraX(valX);
     }
 
     @Watch('cameraY')
     private translateCameraY(valY: number) {
 
-        this.abstractSpace.changeCameraY(valY);
+        this.abstractView.changeCameraY(valY);
     }
 
     @Watch('cameraZ')
     private translateCameraZ(valZ: number) {
 
-        this.abstractSpace.changeCameraZ(valZ);
+        this.abstractView.changeCameraZ(valZ);
     }
 
     @Watch('far')
     private changeFar(far: number) {
 
-        this.abstractSpace.changeFar(far);
+        this.abstractView.changeFar(far);
     }
 
     @Watch('fov')
     private changeFov(fov: number) {
 
-        this.abstractSpace.changeFov(fov);
+        this.abstractView.changeFov(fov);
     }
 
     @Watch('scaleX')
     private scaleObjectX(valX: number) {
 
-        this.abstractSpace.scaleObjectXAxis(valX);
+        this.abstractView.scaleObjectXAxis(valX);
     }
 
     @Watch('scaleY')
     private scaleObjectY(valY: number) {
 
-        this.abstractSpace.scaleObjectYAxis(valY);
+        this.abstractView.scaleObjectYAxis(valY);
     }
 
     @Watch('scaleZ')
     private scaleObjectZ(valZ: number) {
 
-        this.abstractSpace.scaleObjectZAxis(valZ);
+        this.abstractView.scaleObjectZAxis(valZ);
     }
 
     @Watch('translateX')
     private moveObjectX(valX: number) {
 
-        this.abstractSpace.translateObjX(valX);
+        this.abstractView.translateObjX(valX);
     }
 
     @Watch('translateY')
     private moveObjectY(valY: number) {
 
-        this.abstractSpace.translateObjY(valY);
+        this.abstractView.translateObjY(valY);
     }
 
     @Watch('translateZ')
     private moveObjectZ(valZ: number) {
 
-        this.abstractSpace.translateObjZ(valZ);
+        this.abstractView.translateObjZ(valZ);
     }
 }
 

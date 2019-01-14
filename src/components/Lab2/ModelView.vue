@@ -7,7 +7,7 @@ import * as Three from 'three';
 import Vue from 'vue';
 import { Component, Watch, Model } from 'vue-property-decorator';
 import { createNamespacedHelpers } from 'vuex';
-import { AbstractSpace } from '@/components/Lab2/AbstractSpace.vue';
+import { AbstractView } from '@/components/Lab2/AbstractView.vue';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('settings');
 
@@ -17,41 +17,41 @@ const { mapGetters, mapActions } = createNamespacedHelpers('settings');
     }})
 export class ModelView extends Vue {
 
-    private abstractSpace = new AbstractSpace();
+    private abstractView = new AbstractView();
 
     private mounted() {
-        this.abstractSpace.initModelView(this.$el);
-        this.abstractSpace.animateModelView();
+        this.abstractView.initModelView(this.$el);
+        this.abstractView.animateModelView();
     }
 
     @Watch('scaleX')
     private scaleObjectX(valX: number) {
-        this.abstractSpace.scaleObjectXAxis(valX);
+        this.abstractView.scaleObjectXAxis(valX);
     }
 
     @Watch('scaleY')
     private scaleObjectY(valY: number) {
-        this.abstractSpace.scaleObjectYAxis(valY);
+        this.abstractView.scaleObjectYAxis(valY);
     }
 
     @Watch('scaleZ')
     private scaleObjectZ(valZ: number) {
-        this.abstractSpace.scaleObjectZAxis(valZ);
+        this.abstractView.scaleObjectZAxis(valZ);
     }
 
     @Watch('translateX')
     private moveObjectX(valX: number) {
-        this.abstractSpace.translateObjX(valX);
+        this.abstractView.translateObjX(valX);
     }
 
     @Watch('translateY')
     private moveObjectY(valY: number) {
-        this.abstractSpace.translateObjY(valY);
+        this.abstractView.translateObjY(valY);
     }
 
     @Watch('translateZ')
     private moveObjectZ(valZ: number) {
-        this.abstractSpace.translateObjZ(valZ);
+        this.abstractView.translateObjZ(valZ);
     }
 }
 
