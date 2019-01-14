@@ -1,5 +1,5 @@
 <template>
-  <div></div>
+<div></div>
 </template>
 
 <script lang = "ts">
@@ -14,15 +14,15 @@ const { mapGetters, mapActions } = createNamespacedHelpers('settings');
 @Component({
     computed: {
         ...mapGetters(['cameraX', 'cameraY', 'cameraZ', 'scaleX', 'scaleY', 'scaleZ',
-            'translateX', 'translateY', 'translateZ', 'isCameraPerspective']),
+            'translateX', 'translateY', 'translateZ', 'fov', 'far', 'isCameraPerspective']),
     }})
 export class OutputView extends Vue {
     private abstractSpace = new AbstractSpace();
 
     private mounted() {
 
-        this.abstractSpace.initObjectCameraView(this.$el);
-        this.abstractSpace.animateObjectCameraView();
+        this.abstractSpace.initOutputView(this.$el);
+        this.abstractSpace.animateOutputView();
     }
 
     @Watch('isCameraPerspective')
@@ -32,21 +32,33 @@ export class OutputView extends Vue {
     }
 
     @Watch('cameraX')
-    private translateCamera(valX: number) {
+    private translateCameraX(valX: number) {
 
         this.abstractSpace.changeCameraX(valX);
     }
 
     @Watch('cameraY')
-    private changeFOV(valY: number) {
+    private translateCameraY(valY: number) {
 
         this.abstractSpace.changeCameraY(valY);
     }
 
     @Watch('cameraZ')
-    private changeFar(valZ: number) {
+    private translateCameraZ(valZ: number) {
 
         this.abstractSpace.changeCameraZ(valZ);
+    }
+
+    @Watch('far')
+    private changeFar(far: number) {
+
+        this.abstractSpace.changeFar(far);
+    }
+
+    @Watch('fov')
+    private changeFov(fov: number) {
+
+        this.abstractSpace.changeFov(fov);
     }
 
     @Watch('scaleX')
@@ -84,7 +96,6 @@ export class OutputView extends Vue {
 
         this.abstractSpace.translateObjZ(valZ);
     }
-
 }
 
 export default OutputView;

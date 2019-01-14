@@ -25,6 +25,12 @@
             <vue-slider ref="slider" v-model='camY' :min ="1" :max="10"></vue-slider>
             <vue-slider ref="slider" v-model='camZ' :min ="1" :max="10"></vue-slider>
         </div>
+
+         <div>
+            Change Camera Settings
+            <vue-slider ref="slider" v-model='fov' :min ="1" :max="10"></vue-slider>
+            <vue-slider ref="slider" v-model='far' :min ="1" :max="10"></vue-slider>
+        </div>
     </div>
 </template>
 
@@ -64,6 +70,8 @@ export default class Settings extends Vue {
     private camX = 1;
     private camY = 1;
     private camZ = 1;
+    private fov = 1;
+    private far = 1;
     private isCameraPerspective = true;
 
     @Watch('scaleX')
@@ -118,6 +126,18 @@ export default class Settings extends Vue {
     private onCamZChanged(valZ: number) {
 
         this.$store.dispatch('settings/setCameraZ', valZ);
+    }
+
+    @Watch('fov')
+    private onFovChanged(fov: number) {
+
+        this.$store.dispatch('settings/setFov', fov);
+    }
+
+    @Watch('far')
+    private onFarChanged(far: number) {
+
+        this.$store.dispatch('settings/setFar', far);
     }
 
     private toggleValue(value: boolean) {

@@ -17,12 +17,15 @@ const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
     },
 })
 export class InputControl extends mixins(AbstractView) {
+
     private mounted() {
+
         this.init();
     }
 
     @Watch('color')
     private onColorChanged(val: string, oldVal: string) {
+
         this.updateColors(val);
     }
 }

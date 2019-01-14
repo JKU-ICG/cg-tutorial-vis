@@ -9,6 +9,8 @@ const inputState = {
     cameraX: 1,
     cameraY: 1,
     cameraZ: 1,
+    fov: 1,
+    far: 1,
     isCameraPerspective: true,
 };
 
@@ -23,6 +25,8 @@ const inputGetters = {
     cameraX: (state: any) => state.cameraX,
     cameraY: (state: any) => state.cameraY,
     cameraZ: (state: any) => state.cameraZ,
+    fov: (state: any) => state.fov,
+    far: (state: any) => state.far,
     isCameraPerspective: (state: any) => state.isCameraPerspective,
 };
 
@@ -54,6 +58,12 @@ const inputActions = {
     },
     setCameraZ: ({ commit }: any, newCameraZ: number) => {
         commit('setCameraZ', newCameraZ);
+    },
+    setFov: ({ commit }: any, newFov: number) => {
+        commit('setFov', newFov);
+    },
+    setFar: ({ commit }: any, newFar: number) => {
+        commit('setFar', newFar);
     },
     setIsCameraPerspective: ({ commit }: any, value: boolean) => {
         commit('setIsCameraPerspective', value);
@@ -88,6 +98,12 @@ const inputMutations = {
     },
     setCameraZ(state: any, newCameraZ: number) {
         state.cameraZ = newCameraZ;
+    },
+    setFov(state: any, newFov: number) {
+        state.fov = newFov;
+    },
+    setFar(state: any, newFar: number) {
+        state.far = newFar;
     },
     setIsCameraPerspective(state: any, value: boolean) {
         state.isCameraPerspective = value;

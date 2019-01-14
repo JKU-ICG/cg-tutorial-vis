@@ -76,8 +76,8 @@ export class CameraControls extends Vue {
         this.screen = {
             left: 0,
             top: 0,
-            width: window.innerWidth / 2,
-            height: window.innerHeight / 2,
+            width: 600,
+            height: 300,
         };
 
         this.nearPlane = 100;
@@ -178,8 +178,20 @@ export class CameraControls extends Vue {
     // Slider operation on Object Camera
     protected translateCameraX(valX: number) {
 
-        this.objPerspectiveCamera.position.x = - valX * 10;
-        this.objOrthographicCamera.position.x = - valX * 10;
+        this.objPerspectiveCamera.position.x = - valX * 50;
+        this.objOrthographicCamera.position.x = - valX * 50;
+    }
+
+    protected translateCameraY(valY: number) {
+
+        this.objPerspectiveCamera.position.y = - valY * 50;
+        this.objOrthographicCamera.position.y = - valY * 50;
+    }
+
+    protected translateCameraZ(valZ: number) {
+
+        this.objPerspectiveCamera.position.z = - valZ * 50;
+        this.objOrthographicCamera.position.z = - valZ * 50;
     }
 
     protected changeCameraFOV(valY: number) {

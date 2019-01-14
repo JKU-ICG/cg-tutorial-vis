@@ -11,7 +11,9 @@ import {
     PerspectiveCamera, Scene, WebGLRenderer, BoxBufferGeometry,
     MeshBasicMaterial, EdgesGeometry, LineSegments, BoxHelper,
     SphereBufferGeometry, Mesh, Vector3, ArrowHelper, Color,
-    CameraHelper, Vector2, MeshPhongMaterial, DirectionalLight, OrthographicCamera, DirectGeometry} from 'three';
+    CameraHelper, Vector2, MeshPhongMaterial, DirectionalLight,
+    OrthographicCamera, WebGLRenderTarget, NearestFilter, RGBAFormat,
+    ShaderMaterial, Texture, AmbientLight, PlaneBufferGeometry, ClampToEdgeWrapping} from 'three';
 
 // Scene comprises of a world and an object
 
@@ -56,16 +58,30 @@ export class AbstractSpace extends mixins(CameraControls) {
     private dirY: number;
     private dirZ: number;
 
+    private ambientLight: AmbientLight;
+
+    // Raster
+    private rasterizedScene: Scene;
+    private rasterCube: Mesh;
+
+    private texture: WebGLRenderTarget;
+    private textureDimension: { width: number, height: number };
+
+    private resolution: { x: number, y: number };
+
+    private uniforms: any;
+
     constructor() {
 
         super();
 
         this.renderer = new WebGLRenderer();
-        this.screenWidth = window.innerWidth / 2;
-        this.screenHeight = window.innerHeight / 2;
+        this.screenWidth = 600;
+        this.screenHeight = 300;
         this.aspectRatio = this.screenWidth / this.screenHeight;
 
         this.scene = new Scene();
+
         this.scaleObject = { x: 1, y: 1, z: 1 };
 
         this.mainCamera = this.getMainCamera();
@@ -85,6 +101,7 @@ export class AbstractSpace extends mixins(CameraControls) {
             specular: new Color().setHSL(0.1, 0.5, 0.5),
             reflectivity: 0.2,
             shininess: 4,
+            // wireframe: true,
         });
 
         this.cube = new Mesh(new BoxBufferGeometry(200, 200, 200), material);
@@ -99,6 +116,17 @@ export class AbstractSpace extends mixins(CameraControls) {
 
         this.directionalLightModelView = new DirectionalLight(0xffffff, 1);
         this.directionalLightModelView.position.set(1, 1, 1).normalize();
+
+        this.ambientLight = new AmbientLight(0x404040);
+
+        this.rasterizedScene = new Scene();
+
+        this.rasterCube = new Mesh();
+
+        this.texture = new WebGLRenderTarget(0, 0);
+        this.textureDimension = { width: this.screenWidth / 30, height: this.screenHeight / 30 };
+
+        this.resolution = { x: this.textureDimension.width, y: this.textureDimension.height };
     }
 
     public initModelView(el: HTMLElement) {
@@ -107,7 +135,7 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.initRenderer(el);
     }
 
-    public initMainCameraView(el: HTMLElement) {
+    public initCameraView(el: HTMLElement) {
 
         this.resetMainCamera();
         this.updateAndRotateMainCamera();
@@ -115,9 +143,16 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.initRenderer(el);
     }
 
-    public initObjectCameraView(el: HTMLElement) {
+    public initOutputView(el: HTMLElement) {
 
-        this.composeCameraScene();  // comment this?
+        this.composeCameraScene();
+        this.initRenderer(el);
+    }
+
+    public initRasterView(el: HTMLElement, rasterVertexShader: string, rasterFragmentShader: string) {
+
+        this.composeRasterScene(rasterVertexShader, rasterFragmentShader);
+
         this.initRenderer(el);
     }
 
@@ -130,30 +165,18 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.renderer.render(this.scene, this.mainCamera);
     }
 
-    public animateMainCameraView() {
+    public animateCameraView() {
 
-        requestAnimationFrame(this.animateMainCameraView.bind(this));
+        requestAnimationFrame(this.animateCameraView.bind(this));
 
         this.updateObjectCamera();
 
         this.renderer.render(this.scene, this.mainCamera);
     }
 
-    public getScene() {
-        return this.scene;
-    }
+    public animateOutputView() {
 
-    public getRenderer() {
-        return this.renderer;
-    }
-
-    public getPerspectiveCamera() {
-        return this.objectPerspectiveCamera;
-    }
-
-    public animateObjectCameraView() {
-
-        requestAnimationFrame(this.animateObjectCameraView.bind(this));
+        requestAnimationFrame(this.animateOutputView.bind(this));
 
         this.updateObjectCamera();
 
@@ -165,6 +188,25 @@ export class AbstractSpace extends mixins(CameraControls) {
 
             this.objectOrthographicCameraHelper.visible = false;
             this.renderer.render(this.scene, this.objectOrthographicCamera);
+        }
+    }
+
+    public animateRasterView() {
+
+        requestAnimationFrame(this.animateRasterView.bind(this));
+
+        this.updateObjectCamera();
+
+        if (this.isObjectCameraPespective) {
+
+            this.objectPerspectiveCameraHelper.visible = false;
+            this.renderer.render(this.scene, this.objectPerspectiveCamera, this.texture, true);
+            this.renderer.render(this.rasterizedScene, this.objectPerspectiveCamera);
+        } else {
+
+            this.objectOrthographicCameraHelper.visible = false;
+            this.renderer.render(this.scene, this.objectOrthographicCamera, this.texture, true);
+            this.renderer.render(this.rasterizedScene, this.objectOrthographicCamera);
         }
     }
 
@@ -217,9 +259,14 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.cube.position.y = valY * 100;
     }
 
-    public translateObjZ(valZ: number) {
+    public translateObjZ(valZ: number, isViewRaster: boolean = false) {
 
         this.cube.position.z = valZ * 100;
+
+        if (isViewRaster) {
+
+            this.rasterCube.position.z = valZ * 100;
+        }
     }
 
     public changeCameraX(valX: number) {
@@ -229,10 +276,20 @@ export class AbstractSpace extends mixins(CameraControls) {
 
     public changeCameraY(valY: number) {
 
-        this.changeCameraFOV(valY);
+        this.translateCameraY(valY);
     }
 
     public changeCameraZ(valZ: number) {
+
+        this.translateCameraZ(valZ);
+    }
+
+    public changeFov(valY: number) {
+
+        this.changeCameraFOV(valY);
+    }
+
+    public changeFar(valZ: number) {
 
         this.changeCameraFar(valZ);
     }
@@ -247,19 +304,12 @@ export class AbstractSpace extends mixins(CameraControls) {
 
     private updateObjectCamera() {
 
-        // this.cube.rotation.y += 0.01;
-        // this.cube.rotation.z += 0.01;
-
         // Camera Helpers have been added individually to the scene, therefore must be updated accordingly.
+
         if (this.isObjectCameraPespective) {
 
             this.objectPerspectiveCameraHelper.visible = true;
             this.objectOrthographicCameraHelper.visible = false;
-
-            if (this.cube.position.z !== 0) { // if cube is not in default position
-
-                this.objectPerspectiveCamera.lookAt(this.cube.position);
-            }
 
             this.objectPerspectiveCamera.updateProjectionMatrix();
 
@@ -286,6 +336,55 @@ export class AbstractSpace extends mixins(CameraControls) {
         this.addLightsAndCameras();
     }
 
+    private composeRasterScene(rasterVertexShader: string, rasterFragmentShader: string) {
+
+        this.composeCameraScene();
+        this.createTexture();
+        this.createUniforms();
+        this.createRasterizedScene(rasterVertexShader, rasterFragmentShader);
+    }
+
+    private createTexture() {
+
+        const parameters = {
+            minFilter: NearestFilter,
+            magFilter: NearestFilter,
+            format: RGBAFormat,
+            stencilBuffer: false,
+        };
+
+        this.texture = new WebGLRenderTarget(this.textureDimension.width, this.textureDimension.height, parameters);
+    }
+
+    private createUniforms() {
+
+        const textureVal = this.texture.texture;
+        textureVal.wrapS = ClampToEdgeWrapping;
+        textureVal.wrapT = ClampToEdgeWrapping;
+        textureVal.repeat.set(4, 4);
+
+        this.uniforms = {
+            texture: { value: textureVal },
+            resolutionX: { value: this.resolution.x },
+            resolutionY: { value: this.resolution.y },
+        };
+    }
+
+    private createRasterizedScene(rasterVertexShader: string, rasterFragmentShader: string) {
+
+        const boxMaterial = new ShaderMaterial({
+            uniforms: this.uniforms,
+            vertexShader: rasterVertexShader,
+            fragmentShader: rasterFragmentShader,
+        });
+
+        const boxGeometry = new BoxBufferGeometry(400, 200, 200);
+
+        this.rasterCube = new Mesh(boxGeometry, boxMaterial);
+
+        this.rasterizedScene.add(this.rasterCube);
+    }
+
     private addLightsAndCameras() {
 
         // camera needs to be added to the scene as it has a child object
@@ -293,6 +392,8 @@ export class AbstractSpace extends mixins(CameraControls) {
 
         this.objectPerspectiveCamera.add(this.directionalLight);
         this.objectOrthographicCamera.add(this.directionalLight);
+
+        this.scene.add(this.ambientLight);
 
         this.scene.add(this.objectPerspectiveCamera);
         this.scene.add(this.objectPerspectiveCameraHelper);
@@ -304,9 +405,9 @@ export class AbstractSpace extends mixins(CameraControls) {
     private composeModelScene() {
 
         this.scene.add(this.directionalLightModelView);
+        this.scene.add(this.ambientLight);
 
         this.miniWorld();
-        this.addVertices();
         this.addCube();
         this.addObjectAxis();
     }
