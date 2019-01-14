@@ -7,29 +7,29 @@
 
         <div>
             Scale Object
-             <vue-slider ref="slider" v-model='scaleX' :min ="1" :max="10"></vue-slider>
-             <vue-slider ref="slider" v-model='scaleY' :min ="1" :max="10"></vue-slider>
-             <vue-slider ref="slider" v-model='scaleZ' :min ="1" :max="10"></vue-slider>
+            <div> X<vue-slider ref="slider" v-model='scaleX' :min ="1" :max="10"></vue-slider> </div>
+            <div> Y<vue-slider ref="slider" v-model='scaleY' :min ="1" :max="10"></vue-slider> </div>
+            <div> Z<vue-slider ref="slider" v-model='scaleZ' :min ="1" :max="10"></vue-slider> </div>
         </div>
 
         <div>
             Translate Object
-            <vue-slider ref="slider" v-model='translateX' :min ="1" :max="10"></vue-slider>
-            <vue-slider ref="slider" v-model='translateY' :min ="1" :max="10"></vue-slider>
-            <vue-slider ref="slider" v-model='translateZ' :min ="1" :max="10"></vue-slider>
+            <div> X<vue-slider ref="slider" v-model='translateX' :min ="-10" :max="10"></vue-slider> </div>
+            <div> Y<vue-slider ref="slider" v-model='translateY' :min ="-10" :max="10"></vue-slider> </div>
+            <div> Z<vue-slider ref="slider" v-model='translateZ' :min ="-10" :max="10"></vue-slider> </div>
         </div>
 
         <div>
             Move Object Camera
-            <vue-slider ref="slider" v-model='camX' :min ="1" :max="10"></vue-slider>
-            <vue-slider ref="slider" v-model='camY' :min ="1" :max="10"></vue-slider>
-            <vue-slider ref="slider" v-model='camZ' :min ="1" :max="10"></vue-slider>
+            <div> X<vue-slider ref="slider" v-model='camX' :min ="-10" :max="10"></vue-slider> </div>
+            <div> Y<vue-slider ref="slider" v-model='camY' :min ="-10" :max="10"></vue-slider> </div>
+            <div> Z <vue-slider ref="slider" v-model='camZ' :min ="-10" :max="10"></vue-slider> </div>
         </div>
 
          <div>
             Change Camera Settings
-            FOV <vue-slider ref="slider" v-model='fov' :min ="1" :max="10"></vue-slider>
-            FAR <vue-slider ref="slider" v-model='far' :min ="1" :max="10"></vue-slider>
+            <div> FOV <vue-slider ref="slider" v-model='fov' :min ="1" :max="10"></vue-slider> </div>
+            <div> FAR <vue-slider ref="slider" v-model='far' :min ="1" :max="10"></vue-slider> </div>
         </div>
     </div>
 </template>
@@ -64,12 +64,12 @@ export default class Settings extends Vue {
     private scaleX = 1;
     private scaleY = 1;
     private scaleZ = 1;
-    private translateX = 1;
-    private translateY = 1;
-    private translateZ = 1;
-    private camX = 1;
-    private camY = 1;
-    private camZ = 1;
+    private translateX = 0;
+    private translateY = 0;
+    private translateZ = 0;
+    private camX = 0;
+    private camY = 0;
+    private camZ = 0;
     private fov = 1;
     private far = 1;
     private isCameraPerspective = true;

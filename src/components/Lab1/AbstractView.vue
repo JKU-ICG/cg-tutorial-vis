@@ -30,6 +30,19 @@ export class AbstractView extends Vue {
     protected dragControls: any;
     protected pos = 0;
 
+    // constructor() {
+    //     super();
+
+    //  this.scene = new Scene();
+    //  this.renderer = new WebGLRenderer({ antialias: true });
+    //  this.camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+    //  this.geometries: BufferGeometry[] = [];
+    //  this.shapes=  Mesh[] = [];
+    //  this.dragControls: any;
+    //  this.pos = 0;
+    // }
+
+
     protected init() {
         this.scene.background = new Color(0xf0f0f0);
         this.camera.position.z = 400;
