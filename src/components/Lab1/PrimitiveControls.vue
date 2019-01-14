@@ -13,7 +13,7 @@ const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 @Component({
     name: 'primitive-control',
     computed: {
-        ...mapGetters(['color']),
+        ...mapGetters(['color', 'objects']),
     },
 })
 export class PrimitiveControl extends mixins(AbstractView) {
@@ -24,6 +24,11 @@ export class PrimitiveControl extends mixins(AbstractView) {
     @Watch('color')
     private onColorChanged(val: string, oldVal: string) {
         this.updateMaterial();
+    }
+
+    @Watch('objects')
+    private onObjectAdded() {
+        this.renderScene();
     }
 }
 

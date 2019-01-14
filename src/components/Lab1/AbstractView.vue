@@ -1,140 +1,141 @@
 <script lang="ts">
 import Vue from 'vue';
-import Component from 'vue-class-component';
+import { createNamespacedHelpers } from 'vuex';
+import { Component, Watch } from 'vue-property-decorator';
 import {
-  Mesh, Scene, WebGLRenderer, PerspectiveCamera,
-  BufferGeometry, BoxBufferGeometry, SphereBufferGeometry,
-  BufferAttribute, Color, MeshBasicMaterial, VertexColors,
+    Mesh, Scene, WebGLRenderer, PerspectiveCamera,
+    BufferGeometry, BoxBufferGeometry, SphereBufferGeometry,
+    BufferAttribute, Color, MeshBasicMaterial, VertexColors, Vector3,
 } from 'three';
 
-@Component({})
+import { DragControls } from '../../lib/three-dragcontrols';
+import { IObjects } from '@/store/modules/IObjects';
+
+const { mapMutations, mapGetters } = createNamespacedHelpers('cubestore');
+
+@Component({
+    computed: {
+        ...mapGetters(['objects', 'object']),
+    },
+    methods: {
+        ...mapMutations(['pushObject']),
+    },
+})
 export class AbstractView extends Vue {
-  protected scene = new Scene();
-  protected renderer = new WebGLRenderer({ antialias: true });
-  protected camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-  protected geometries: BufferGeometry[] = [];
-  protected shapes: Mesh[] = [];
+    protected scene = new Scene();
+    protected renderer = new WebGLRenderer({ antialias: true });
+    protected camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+    protected geometries: BufferGeometry[] = [];
+    protected shapes: Mesh[] = [];
+    protected dragControls: any;
+    protected pos = 0;
 
-  protected init() {
-    const elements = this.finalSceneElements();
-    this.$el.appendChild(elements.renderer.domElement);
-  }
+    protected init() {
+        this.scene.background = new Color(0xf0f0f0);
+        this.camera.position.z = 400;
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
+        this.renderScene();
+        this.$el.appendChild(this.renderer.domElement);
+    }
 
-  protected createSquare() {
-    const vertices = new Float32Array([
-      -50.0, -50.0, 50.0,
-      50.0, -50.0, 50.0,
-      50.0, 50.0, 50.0,
-      50.0, 50.0, 50.0,
-      -50.0, 50.0, 50.0,
-      -50.0, -50.0, 50.0,
-    ]);
-    const customGeometry = new BufferGeometry();
-    customGeometry.addAttribute('position', new BufferAttribute(vertices, 3));
-    this.geometries.push(customGeometry);
-  }
+    protected initDragShapes() {
+        this.dragControls = new DragControls(this.shapes, this.camera, this.renderer.domElement);
+    }
 
-  protected createCube() {
-    const customGeometry = new BoxBufferGeometry(50, 50, 50);
-    this.geometries.push(customGeometry);
-  }
+    protected renderScene() {
+        this.renderer.render(this.scene, this.camera);
+    }
 
-  protected createSphere() {
-    const customGeometry = new SphereBufferGeometry(0.5, 32, 32);
-    this.geometries.push(customGeometry);
-  }
+    protected updateMaterial() {
+        this.shapes.forEach((shape) => {
+            shape.material = new MeshBasicMaterial({
+                color: 0x000000,
+                wireframe: true,
+            });
+            shape.material.needsUpdate = true;
+        });
 
-  protected appendObjectsToToolbar() {
-    // Modify renderer and scale the objects, also create a different scenegraph
-    // because toolbar will contain more objects
-    this.scene.background = new Color(0xf0f0f0);
-    this.createSquare();
-    this.createCube();
+        this.renderer.render(this.scene, this.camera);
+    }
 
-    const material = new MeshBasicMaterial({ color: 0xff00ff });
-    let pos = 0;
+    protected updateColors(color: any) {
+        this.geometries.forEach((geometry) => {
+            const count = geometry.attributes.position.count;
+            geometry.addAttribute('color', new BufferAttribute(new Float32Array(count * 3), 3));
+            const attribColor = geometry.attributes.color;
 
-    this.geometries.forEach((geometry) => {
-      const shape = new Mesh(geometry, material);
-      // just for differentiating
-      shape.position.x = pos;
-      shape.position.y = pos;
-      shape.position.z = pos;
-      shape.rotation.x = 0.01;
-      pos = pos + 60;
-      this.shapes.push(shape);
-      this.scene.add(shape);
-    });
-  }
+            for (let i = 0; i < count; i++) {
+                attribColor.setXYZ(
+                    i,
+                    color.r / 255.0,
+                    color.g / 255.0,
+                    color.b / 255.0,
+                );
+            }
+            (geometry.attributes.color as BufferAttribute).needsUpdate = true;
+        });
 
-  protected appendObjectsToScene() {
-    this.scene.background = new Color(0xf0f0f0);
-    this.createSquare();
-    this.createCube();
+        this.renderer.render(this.scene, this.camera);
+    }
 
-    const material = new MeshBasicMaterial({
-      vertexColors: VertexColors,
-    });
-    let pos = 0;
+    @Watch('object')
+    private addShapeOnClick(shape: string) {
+        let position = new Vector3(0, 0, 0);
+        if (shape.length <= 0) {
+            return;
+        }
+        if (shape.localeCompare('square') === 0) {
+            position = this.createSquare();
 
-    this.geometries.forEach((geometry) => {
-      const shape = new Mesh(geometry, material);
-      // just for differentiating
-      shape.position.x = pos;
-      shape.position.y = pos;
-      shape.position.z = pos;
-      shape.rotation.x = 0.01;
-      pos = pos + 60;
-      this.shapes.push(shape);
-      this.scene.add(shape);
-    });
-  }
+        } else if (shape.localeCompare('cube') === 0) {
+            position = this.createCube();
 
-  protected updateMaterial() {
-    this.shapes.forEach((shape) => {
-      shape.material = new MeshBasicMaterial({
-        color: 0x00ff00,
-        wireframe: true,
-      });
-      shape.material.needsUpdate = true;
-    });
+        } else if (shape.localeCompare('sphere') === 0) {
+            position = this.createSphere();
 
-    this.renderer.render(this.scene, this.camera);
-  }
+        }
+        this.$store.commit('cubestore/pushObject', position);
+    }
 
-  protected updateColors(color: any) {
-    this.geometries.forEach((geometry) => {
-      const count = geometry.attributes.position.count;
-      geometry.addAttribute('color', new BufferAttribute(new Float32Array(count * 3), 3));
-      const attribColor = geometry.attributes.color;
+    private appendShapeToScene(geometry: BufferGeometry): Vector3 {
+        this.geometries.push(geometry);
+        const material = new MeshBasicMaterial({
+            vertexColors: VertexColors,
+        });
 
-      for (let i = 0; i < count; i++) {
-        attribColor.setXYZ(
-          i,
-          color.r / 255.0,
-          color.g / 255.0,
-          color.b / 255.0,
-        );
-      }
-      (geometry.attributes.color as BufferAttribute).needsUpdate = true;
-    });
+        const shape = new Mesh(geometry, material);
+        // just for differentiating
+        shape.position.x = this.pos;
+        this.pos = this.pos + 100;
+        this.shapes.push(shape);
+        this.scene.add(shape);
+        return shape.position;
+    }
 
-    this.renderer.render(this.scene, this.camera);
-  }
+    private createSquare(): Vector3 {
+        const vertices = new Float32Array([
+            -50.0, -50.0, 50.0,
+            50.0, -50.0, 50.0,
+            50.0, 50.0, 50.0,
+            50.0, 50.0, 50.0,
+            -50.0, 50.0, 50.0,
+            -50.0, -50.0, 50.0,
+        ]);
+        const customGeometry = new BufferGeometry();
+        customGeometry.addAttribute('position', new BufferAttribute(vertices, 3));
+        return this.appendShapeToScene(customGeometry);
+    }
 
-  protected finalSceneElements() {
-    this.appendObjectsToScene();
-    this.camera.position.z = 400;
-    this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
-    this.renderer.render(this.scene, this.camera);
+    private createCube(): Vector3 {
+        const customGeometry = new BoxBufferGeometry(50, 50, 50);
+        return this.appendShapeToScene(customGeometry);
+    }
 
-    return {
-      scene: this.scene,
-      renderer: this.renderer,
-      camera: this.camera,
-    };
-  }
+    private createSphere(): Vector3 {
+        const customGeometry = new SphereBufferGeometry(50, 32, 32);
+        return this.appendShapeToScene(customGeometry);
+    }
 }
 
 export default AbstractView;
