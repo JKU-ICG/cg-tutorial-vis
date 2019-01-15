@@ -101,6 +101,8 @@ export class AbstractView extends mixins(CameraControls) {
             specular: new Color().setHSL(0.1, 0.5, 0.5),
             reflectivity: 0.2,
             shininess: 4,
+            transparent: true,
+            opacity: 0.5,
             // wireframe: true,
         });
 
@@ -117,7 +119,7 @@ export class AbstractView extends mixins(CameraControls) {
         this.directionalLightModelView = new DirectionalLight(0xffffff, 1);
         this.directionalLightModelView.position.set(1, 1, 1).normalize();
 
-        this.ambientLight = new AmbientLight(0x404040);
+        this.ambientLight = new AmbientLight(0x40ffff);
 
         this.rasterizedScene = new Scene();
 
@@ -320,7 +322,6 @@ export class AbstractView extends mixins(CameraControls) {
             this.objectOrthographicCameraHelper.visible = true;
 
             this.objectOrthographicCamera.updateProjectionMatrix();
-            this.objectOrthographicCamera.lookAt(this.cube.position);
 
             this.objectOrthographicCameraHelper.update();
         }

@@ -5,7 +5,7 @@
     </div>
     <div class="views">
       <div> CameraView <CameraView/> </div>
-      <div> Rasterization View <Rasterization/> </div>
+      <div> FrameBuffer <Rasterization/> </div>
       <div> ModelView <ModelView/> </div>
       <div> OutputView <OutputView/> </div>
   </div>
@@ -23,6 +23,7 @@
   width: 100%;
   display: grid;
   grid-template-columns: 50% 50%;
+  grid-gap: 10px;
 }
 </style>
 
