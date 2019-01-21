@@ -7,7 +7,12 @@ import { AbstractView } from '@/components/Lab1/AbstractView.vue';
 import { createNamespacedHelpers } from 'vuex';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import { mixins } from 'vue-class-component';
-import { IObjects } from '@/store/modules/IObjects';
+import { Vector3 } from 'three';
+
+interface IObjects {
+    name: string;
+    position: Vector3;
+}
 
 const { mapActions, mapGetters } = createNamespacedHelpers('cubestore');
 

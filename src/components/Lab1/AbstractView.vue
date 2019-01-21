@@ -9,7 +9,6 @@ import {
 } from 'three';
 
 import { DragControls } from '../../lib/three-dragcontrols';
-import { IObjects } from '@/store/modules/IObjects';
 
 const { mapMutations, mapGetters } = createNamespacedHelpers('cubestore');
 
