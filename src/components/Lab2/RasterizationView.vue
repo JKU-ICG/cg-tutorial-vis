@@ -41,7 +41,6 @@
 import Vue from 'vue';
 import { Component, Watch } from 'vue-property-decorator';
 import { createNamespacedHelpers } from 'vuex';
-import { watch } from 'fs';
 import { AbstractView } from '@/components/Lab2/AbstractView.vue';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('settings');
