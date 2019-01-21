@@ -20,11 +20,11 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Toolbar from '@/components/Toolbar.vue';
-import InputControls from '@/components/InputControls.vue';
-import PrimitiveControls from '@/components/PrimitiveControls.vue';
-import RasterizeControls from '@/components/RasterizeControls.vue';
-import OutputControls from '@/components/OutputControls.vue';
+import Toolbar from '@/components/Lab1/Toolbar.vue';
+import InputControls from '@/components/Lab1/InputControls.vue';
+import PrimitiveControls from '@/components/Lab1/PrimitiveControls.vue';
+import RasterizeControls from '@/components/Lab1/RasterizeControls.vue';
+import OutputControls from '@/components/Lab1/OutputControls.vue';
 
 @Component({
   components: {

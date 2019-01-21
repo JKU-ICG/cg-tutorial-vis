@@ -1,18 +1,48 @@
 <template>
-  <div class="lab lab2">
-    <h1>Lab2</h1>
-    <CounterControls/>
+  <div class="lab">
+    <div class="settings">
+    <Settings/>
+    </div>
+    <div class="views">
+      <div> CameraView <CameraView/> </div>
+      <div> FrameBuffer <Rasterization/> </div>
+      <div> ModelView <ModelView/> </div>
+      <div> OutputView <OutputView/> </div>
+  </div>
   </div>
 </template>
 
+<style lang="scss">
+.lab {
+  display: flex;
+}
+.settings {
+  flex: 1 0 200px;
+}
+.views {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-gap: 10px;
+}
+</style>
+
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import CounterControls from '@/components/CounterControls.vue'; // @ is an alias to /src
+import ModelView from '@/components/Lab2/ModelView.vue';
+import CameraView from '@/components/Lab2/CameraView.vue';
+import OutputView from '@/components/Lab2/OutputView.vue';
+import Settings from '@/components/Lab2/Settings.vue';
+import Rasterization from '@/components/Lab2/RasterizationView.vue';
 
 @Component({
-  components: {
-    CounterControls,
-  },
+    components: {
+        ModelView,
+        CameraView,
+        OutputView,
+        Settings,
+        Rasterization,
+    },
 })
-export default class Lab2 extends Vue {}
+export default class Lab2 extends Vue { }
 </script>
