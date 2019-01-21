@@ -59,7 +59,7 @@ export class Rasterization extends Vue {
         const vertexShader = document.getElementById('vertexShader')!.textContent || '';
         const fragmentShader = document.getElementById('fragmentShader')!.textContent || '';
 
-        this.abstractView.initRasterView(this.$el, vertexShader, fragmentShader);
+        this.abstractView.initRasterView(this.$el as HTMLElement, vertexShader, fragmentShader);
         this.abstractView.animateRasterView();
     }
 

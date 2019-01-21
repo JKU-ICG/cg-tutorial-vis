@@ -94,9 +94,9 @@ export class DragControls extends EventDispatcher {
     public notify(type: string) {
         // tslint:disable-next-line:no-console
         console.error('THREE.DragControls: notify() has been deprecated. Use dispatchEvent() instead.');
-        this.dispatchEvent.call(this.domElement, [{
+        this.dispatchEvent.call(this.domElement, {
             type,
-        }]);
+        });
     }
 
     private onDocumentMouseMove(event: MouseEvent) {
@@ -115,10 +115,10 @@ export class DragControls extends EventDispatcher {
                 this.selected.position.copy(this.intersection.sub(this.offset));
             }
 
-            this.dispatchEvent.call(this.domElement, [{
+            this.dispatchEvent.call(this.domElement, {
                 type: 'drag',
                 object: this.selected,
-            }]);
+            });
             return;
         }
 
@@ -132,20 +132,20 @@ export class DragControls extends EventDispatcher {
             this.plane.setFromNormalAndCoplanarPoint(this.camera.getWorldDirection(this.plane.normal), object.position);
 
             if (this.hovered !== object) {
-                this.dispatchEvent.call(this.domElement, [{
+                this.dispatchEvent.call(this.domElement, {
                     type: 'hoveron',
                     object,
-                }]);
+                });
                 this.domElement.style.cursor = 'pointer';
                 this.hovered = object;
             }
 
         } else {
             if (this.hovered !== null) {
-                this.dispatchEvent.call(this.domElement, [{
+                this.dispatchEvent.call(this.domElement, {
                     type: 'hoveroff',
                     object: this.hovered,
-                }]);
+                });
                 this.domElement.style.cursor = 'auto';
                 this.hovered = null;
             }
@@ -168,10 +168,10 @@ export class DragControls extends EventDispatcher {
 
             this.domElement.style.cursor = 'move';
 
-            this.dispatchEvent.call(this.domElement, [{
+            this.dispatchEvent.call(this.domElement, {
                 type: 'dragstart',
                 object: this.selected,
-            }]);
+            });
         }
     }
 
@@ -179,10 +179,10 @@ export class DragControls extends EventDispatcher {
         event.preventDefault();
 
         if (this.selected) {
-            this.dispatchEvent.call(this.domElement, [{
+            this.dispatchEvent.call(this.domElement, {
                 type: 'dragend',
                 object: this.selected,
-            }]);
+            });
             this.selected = null;
         }
         this.domElement.style.cursor = 'auto';
@@ -203,10 +203,10 @@ export class DragControls extends EventDispatcher {
             if (this.raycaster.ray.intersectPlane(this.plane, this.intersection)) {
                 this.selected.position.copy(this.intersection.sub(this.offset));
             }
-            this.dispatchEvent.call(this.domElement, [{
+            this.dispatchEvent.call(this.domElement, {
                 type: 'drag',
                 object: this.selected,
-            }]);
+            });
             return;
         }
     }
@@ -240,10 +240,10 @@ export class DragControls extends EventDispatcher {
 
             this.domElement.style.cursor = 'move';
 
-            this.dispatchEvent.call(this.domElement, [{
+            this.dispatchEvent.call(this.domElement, {
                 type: 'dragstart',
                 object: this.selected,
-            }]);
+            });
         }
     }
 
@@ -251,10 +251,10 @@ export class DragControls extends EventDispatcher {
         event.preventDefault();
 
         if (this.selected) {
-            this.dispatchEvent.call(this.domElement, [{
+            this.dispatchEvent.call(this.domElement, {
                 type: 'dragend',
                 object: this.selected,
-            }]);
+            });
 
             this.selected = null;
         }

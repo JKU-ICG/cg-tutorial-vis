@@ -23,7 +23,7 @@ export class CameraView extends Vue {
 
   private mounted() {
 
-    this.abstractView.initCameraView(this.$el);
+    this.abstractView.initCameraView(this.$el as HTMLElement);
     this.abstractView.animateCameraView();
   }
 

@@ -20,7 +20,7 @@ export class OutputView extends Vue {
 
   private mounted() {
 
-    this.abstractView.initOutputView(this.$el);
+    this.abstractView.initOutputView(this.$el as HTMLElement);
     this.abstractView.animateOutputView();
   }
 
